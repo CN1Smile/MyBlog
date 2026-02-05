@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章 - HENGHENG STUDIO</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/post.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🔥</span>
+                <span class="logo-text">HENGHENG STUDIO</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">文章</a>
+            <a href="#" class="nav-link">代码</a>
+            <a href="#" class="nav-link">关于我</a>
+            <a href="#" class="nav-link">友链</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+            <button class="subscribe-btn">✦ 订阅更新</button>
+        </div>
+    </header>
+
+    <!-- 目录导航 -->
+    <aside id="toc-sidebar" class="toc-sidebar">
+        <button id="toc-toggle" class="toc-toggle" title="收起目录">
+            <span class="toc-toggle-icon">◀</span>
+        </button>
+        <div class="toc-content">
+            <h3 class="toc-title">目录</h3>
+            <nav id="toc-nav" class="toc-nav">
+                <!-- 目录内容由 JS 动态生成 -->
+            </nav>
+        </div>
+    </aside>
+
+    <!-- 文章容器 -->
+    <main class="post-container">
+        <!-- 加载状态 -->
+        <div id="loading" class="post-loading">
+            <div class="loading-spinner"></div>
+            <p>加载文章中...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="post-error hidden">
+            <p class="error-icon">😕</p>
+            <h2>文章未找到</h2>
+            <p>抱歉，您请求的文章不存在。</p>
+            <a href="index.html" class="btn-primary">返回首页</a>
+        </div>
+
+        <!-- 文章内容 -->
+        <article id="article" class="article hidden">
+            <!-- 文章头部 -->
+            <header class="article-header">
+                <a href="index.html" class="back-link">← 返回文章列表</a>
+                <h1 id="article-title" class="article-title"></h1>
+                <div class="article-meta">
+                    <span id="article-date" class="article-date"></span>
+                    <span class="meta-divider">·</span>
+                    <span id="article-author" class="article-author"></span>
+                    <span class="meta-divider">·</span>
+                    <span id="article-reading-time" class="article-reading-time"></span>
+                </div>
+                <div id="article-category" class="article-category"></div>
+            </header>
+
+            <!-- 文章正文 -->
+            <div id="article-content" class="article-content">
+                <!-- 内容通过 JS 动态加载 -->
+            </div>
+
+            <!-- 评论区 -->
+            <section class="comments-section">
+                <h2 class="comments-title">💬 评论</h2>
+                <p class="comments-hint">评论基于 GitHub Issues，需要登录 GitHub 账号</p>
+                <div id="utterances-container" class="utterances-container">
+                    <!-- Utterances 评论组件将在这里加载 -->
+                </div>
+            </section>
+
+            <!-- 文章底部 -->
+            <footer class="article-footer">
+                <div class="article-nav">
+                    <a id="prev-post" href="#" class="nav-post nav-prev hidden">
+                        <span class="nav-label">← 上一篇</span>
+                        <span class="nav-title"></span>
+                    </a>
+                    <a id="next-post" href="#" class="nav-post nav-next hidden">
+                        <span class="nav-label">下一篇 →</span>
+                        <span class="nav-title"></span>
+                    </a>
+                </div>
+                <div class="back-to-home">
+                    <a href="index.html" class="btn-secondary">← 返回首页</a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <script src="js/post.js"></script>
+</body>
+</html>

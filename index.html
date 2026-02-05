@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HENGHENG STUDIO - Personal Blog</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <span class="logo-icon">�</span>
+                <span class="logo-text">HENGHENG STUDIO</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-link">文章</a>
+            <a href="#" class="nav-link">代码</a>
+            <a href="#" class="nav-link">关于我</a>
+            <a href="#" class="nav-link">友链</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+            <button class="subscribe-btn">✦ 订阅更新</button>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="main-container">
+        <!-- 左侧区域 -->
+        <div class="left-section">
+            <!-- Hero 区域 -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <p class="hero-label">— PERSONAL BLOG · 2026</p>
+                    <h1 class="hero-title">
+                        记录 <span class="gradient-text">构建与思考</span> 的每一个瞬间。
+                    </h1>
+                    <p class="hero-description">
+                        这里是一个关于前端、AI 与产品设计的长期实验场。通过文字、代码与可视化实验，慢慢拼出一个「如何构建理想工具」的答案。
+                    </p>
+                    <div class="hero-tags">
+                        <span class="tag">✎ 写作主题：</span>
+                        <span class="tag-item">前端</span>
+                        <span class="tag-item">AI</span>
+                        <span class="tag-item">工具思维</span>
+                        <span class="tag-divider">|</span>
+                        <span class="tag">每周二 / 周五 更新</span>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-primary">开始阅读 ↗</button>
+                        <button class="btn-secondary">查看代码与笔记</button>
+                    </div>
+                    <div class="hero-stats">
+                        <span><strong>128</strong> 篇文章</span>
+                        <span><strong>9</strong> 个长期系列</span>
+                        <span><strong>1</strong> 位好奇的访问者</span>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="gradient-card"></div>
+                </div>
+            </section>
+
+            <!-- 最新文章区域 -->
+            <section class="posts-section">
+                <h2 class="section-title">LATEST POSTS</h2>
+                <div id="posts-list" class="posts-list">
+                    <!-- 文章将通过 JS 动态加载 -->
+                </div>
+            </section>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <aside class="right-sidebar">
+            <!-- 最新笔记卡片 -->
+            <div class="sidebar-card note-card">
+                <h3 class="card-label">LATEST NOTE</h3>
+                <h4 class="card-title">用「界面语言」设计你的开发流程</h4>
+                <p class="card-desc">
+                    如何把日常的 commit、分支管理和自动化脚本，当成一套可被设计、被迭代的「界面」。
+                </p>
+                <div class="card-tags">
+                    <span class="mini-tag purple">Workflow</span>
+                    <span class="mini-tag blue">Developer UX</span>
+                    <span class="mini-tag gray">Opinion</span>
+                </div>
+                <div class="card-author">
+                    <div class="author-avatar">H</div>
+                    <div class="author-info">
+                        <span class="author-name">Hengheng</span>
+                        <span class="author-meta">更新于 5 天前 · 7 min read</span>
+                    </div>
+                    <button class="read-btn">下一篇 →</button>
+                </div>
+                <p class="card-footnote">阅读一篇属于自己的「小电影」般序言</p>
+            </div>
+
+            <!-- 写些什么 -->
+            <div class="sidebar-card filter-card">
+                <h3 class="card-label">写些什么</h3>
+                <div class="filter-tags">
+                    <span class="filter-tag active">全部</span>
+                    <span class="filter-tag">前端研究</span>
+                    <span class="filter-tag">系统化思考</span>
+                    <span class="filter-tag">AI笔记</span>
+                    <span class="filter-tag">工具折腾</span>
+                    <span class="filter-tag">随笔</span>
+                </div>
+
+                <div class="series-section">
+                    <h4 class="series-title">进行中的系列</h4>
+                    <ul class="series-list">
+                        <li>
+                            <span class="series-name">「轻量级组件库」实验</span>
+                            <span class="series-progress">已发布 3/8 篇 · 前端 · 设计工程</span>
+                        </li>
+                        <li>
+                            <span class="series-name">构开发者的「写作课」</span>
+                            <span class="series-progress">已发布 2/5 篇 · 写 · 叙事</span>
+                        </li>
+                        <li>
+                            <span class="series-name">LLM 工作流备忘录</span>
+                            <span class="series-progress">已发布 4/10 篇 · AI · 工具链</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h4 class="about-title">关于这个博客</h4>
+                    <p class="about-text">
+                        这个博客是一个开放性运代码，数字工作台，工具设计，共现这里记录产品、写作、改进工作流的所有实验与共鸣。
+                    </p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- 加载状态 -->
+    <div id="loading" class="loading hidden">
+        <div class="loading-spinner"></div>
+        <p>加载中...</p>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

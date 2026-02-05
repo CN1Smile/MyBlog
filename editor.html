@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>撰写文章 - HENGHENG STUDIO</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for code highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+</head>
+<body>
+    <!-- 密码验证遮罩层 -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-dialog">
+            <div class="auth-icon">🔐</div>
+            <h2>访问验证</h2>
+            <p>请输入密码以访问编辑器</p>
+            <form id="authForm">
+                <input type="password" id="authPassword" placeholder="输入密码..." autocomplete="off" autofocus>
+                <p class="auth-error" id="authError"></p>
+                <button type="submit" class="btn-primary">验证</button>
+            </form>
+            <a href="index.html" class="auth-back">← 返回首页</a>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">📝</span>
+                <span class="logo-text">HENGHENG STUDIO</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="#" class="nav-link">文章</a>
+            <a href="#" class="nav-link">关于我</a>
+            <span class="save-status" id="saveStatus">未保存</span>
+        </div>
+    </header>
+
+    <!-- 编辑器主容器 -->
+    <main class="editor-container">
+        <!-- 元信息表单区域 -->
+        <section class="meta-section">
+            <div class="meta-row">
+                <div class="meta-field meta-field-large">
+                    <label for="title">文章标题</label>
+                    <input type="text" id="title" placeholder="输入文章标题..." autocomplete="off">
+                </div>
+                <div class="meta-field">
+                    <label for="slug">URL 别名 (Slug)</label>
+                    <input type="text" id="slug" placeholder="auto-generated-slug" autocomplete="off">
+                </div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-field meta-field-large">
+                    <label for="excerpt">文章摘要</label>
+                    <textarea id="excerpt" rows="2" placeholder="简短描述文章内容..."></textarea>
+                </div>
+                <div class="meta-field">
+                    <label for="category">分类</label>
+                    <select id="category">
+                        <option value="frontend">前端研究</option>
+                        <option value="ai">AI笔记</option>
+                        <option value="tools">工具折腾</option>
+                        <option value="thinking">系统化思考</option>
+                        <option value="essay">随笔</option>
+                    </select>
+                </div>
+            </div>
+            <div class="meta-row">
+                <div class="meta-field">
+                    <label for="tags">标签 (逗号分隔)</label>
+                    <input type="text" id="tags" placeholder="JavaScript, Vue, 教程" autocomplete="off">
+                </div>
+                <div class="meta-actions">
+                    <button class="btn-secondary" id="btnCopyJson">📋 复制 JSON</button>
+                    <button class="btn-secondary" id="btnDownload">💾 下载 JSON</button>
+                    <button class="btn-primary" id="btnClearDraft">🗑️ 清除草稿</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 编辑器工具栏 -->
+        <div class="editor-toolbar">
+            <button type="button" class="toolbar-btn" data-action="bold" title="加粗 (Ctrl+B)"><strong>B</strong></button>
+            <button type="button" class="toolbar-btn" data-action="italic" title="斜体 (Ctrl+I)"><em>I</em></button>
+            <button type="button" class="toolbar-btn" data-action="heading" title="标题">H</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-action="link" title="链接 (Ctrl+K)">🔗</button>
+            <button type="button" class="toolbar-btn" data-action="image" title="图片">🖼️</button>
+            <button type="button" class="toolbar-btn" data-action="code" title="代码块">{ }</button>
+            <button type="button" class="toolbar-btn" data-action="quote" title="引用">❝</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-action="ul" title="无序列表">•</button>
+            <button type="button" class="toolbar-btn" data-action="ol" title="有序列表">1.</button>
+            <span class="toolbar-divider"></span>
+            <button type="button" class="toolbar-btn" data-action="hr" title="分隔线">—</button>
+            <div class="toolbar-spacer"></div>
+            <div class="mobile-tabs">
+                <button type="button" class="tab-btn active" data-tab="editor">编辑</button>
+                <button type="button" class="tab-btn" data-tab="preview">预览</button>
+            </div>
+        </div>
+
+        <!-- 编辑和预览区域 -->
+        <div class="editor-main">
+            <div class="editor-pane" id="editorPane">
+                <textarea id="markdownInput" placeholder="开始用 Markdown 撰写你的文章...
+
+# 标题示例
+
+这是一段普通文本。
+
+## 代码示例
+
+```javascript
+console.log('Hello, World!');
+```
+
+## 列表示例
+
+- 项目一
+- 项目二
+- 项目三
+
+> 这是一段引用文字。
+"></textarea>
+            </div>
+            <div class="preview-pane" id="previewPane">
+                <div class="preview-content article-content" id="previewContent">
+                    <p class="preview-placeholder">预览区域 - 开始输入内容后将显示渲染结果</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/editor.js"></script>
+</body>
+</html>
