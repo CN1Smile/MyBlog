@@ -797,12 +797,17 @@
 
         try {
             const result = await GitHubStorage.publishPost(post);
-            showToast(result.message, 'success');
+            showToast(result.message + ' 正在跳转...', 'success');
             
             // 清除草稿
             localStorage.removeItem(STORAGE_KEY);
             hasUnsavedChanges = false;
             updateSaveStatus('saved');
+            
+            // 延迟跳转，让用户看到成功提示
+            setTimeout(() => {
+                window.location.href = `post.html?slug=${encodeURIComponent(post.slug)}`;
+            }, 1500);
             
         } catch (error) {
             console.error('Publish error:', error);
