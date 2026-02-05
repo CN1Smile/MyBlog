@@ -6,6 +6,11 @@
 const postsList = document.getElementById('posts-list');
 const loadingElement = document.getElementById('loading');
 
+// 存储所有文章数据（用于筛选）
+let allPosts = [];
+// 当前选中的分类
+let currentCategory = '全部';
+
 // 分类图标映射
 const categoryIcons = {
     'openspec': { icon: '🔧', name: 'OpenSpec' },
@@ -227,6 +232,42 @@ function applySiteConfig(config) {
 }
 
 /**
+ * 获取文章的分类名称（用于筛选匹配）
+ */
+function getPostCategoryName(post) {
+    const slug = post.slug || '';
+    const title = post.title || '';
+    const category = post.category || '';
+    
+    // 优先使用文章自身的 category 字段
+    if (category) return category;
+    
+    // 否则根据 slug 和 title 推断
+    if (slug.includes('unity') || title.includes('Unity')) return 'Unity 开发';
+    if (slug.includes('shader') || title.includes('渲染') || title.includes('图形') || title.includes('Shader')) return '图形渲染';
+    if (slug.includes('architecture') || title.includes('架构') || title.includes('设计模式')) return '游戏架构';
+    if (slug.includes('art') || title.includes('美术') || title.includes('TA')) return '技术美术';
+    if (slug.includes('devlog') || title.includes('日志') || title.includes('日记')) return '开发日志';
+    
+    return '其他';
+}
+
+/**
+ * 根据分类筛选文章
+ */
+function filterPostsByCategory(categoryName) {
+    if (categoryName === '全部') {
+        return allPosts;
+    }
+    
+    return allPosts.filter(post => {
+        const postCategory = getPostCategoryName(post);
+        // 支持模糊匹配（比如 "Unity" 匹配 "Unity 开发"）
+        return postCategory.includes(categoryName) || categoryName.includes(postCategory);
+    });
+}
+
+/**
  * 加载文章数据
  */
 async function loadPosts() {
@@ -243,8 +284,14 @@ async function loadPosts() {
         
         const data = await response.json();
         
+        // 保存所有文章用于后续筛选
+        allPosts = data.posts || [];
+        
         hideLoading();
-        renderPosts(data.posts);
+        
+        // 根据当前选中分类渲染
+        const filteredPosts = filterPostsByCategory(currentCategory);
+        renderPosts(filteredPosts);
         
     } catch (error) {
         console.error('加载文章失败:', error);
@@ -254,14 +301,45 @@ async function loadPosts() {
 }
 
 /**
+ * 显示无文章提示
+ */
+function showEmptyState(categoryName) {
+    postsList.innerHTML = `
+        <div class="post-item" style="text-align: center; padding: 3rem;">
+            <p style="font-size: 2rem; margin-bottom: 1rem;">📭</p>
+            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+                「${categoryName}」分类下暂无文章
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                试试其他分类，或点击「全部」查看所有文章
+            </p>
+        </div>
+    `;
+}
+
+/**
  * 初始化筛选标签交互
  */
 function initFilterTags() {
     const filterTags = document.querySelectorAll('.filter-tag');
     filterTags.forEach(tag => {
         tag.addEventListener('click', () => {
+            // 更新样式
             filterTags.forEach(t => t.classList.remove('active'));
             tag.classList.add('active');
+            
+            // 获取分类名并筛选
+            const categoryName = tag.textContent.trim();
+            currentCategory = categoryName;
+            
+            // 筛选并重新渲染
+            const filteredPosts = filterPostsByCategory(categoryName);
+            
+            if (filteredPosts.length === 0) {
+                showEmptyState(categoryName);
+            } else {
+                renderPosts(filteredPosts);
+            }
         });
     });
 }
