@@ -16,6 +16,29 @@
         .about-header {
             text-align: center;
             margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .edit-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .edit-btn:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
         }
         
         .avatar-large {
@@ -53,6 +76,7 @@
             justify-content: center;
             gap: 1rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
         
         .social-link {
@@ -153,6 +177,10 @@
             margin-bottom: 1.5rem;
         }
         
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -171,7 +199,7 @@
             margin-bottom: 0.25rem;
         }
         
-        .timeline-item .title {
+        .timeline-item .exp-title {
             font-weight: 500;
             margin-bottom: 0.25rem;
         }
@@ -247,22 +275,20 @@
     <main class="about-container">
         <!-- 头像和基本信息 -->
         <div class="about-header">
-            <div class="avatar-large">张</div>
-            <h1>张志通</h1>
-            <p class="title">🎮 游戏开发工程师</p>
-            <p class="bio">
+            <a href="about-edit.html" class="edit-btn">✏️ 编辑</a>
+            <div class="avatar-large" id="avatar">张</div>
+            <h1 id="userName">张志通</h1>
+            <p class="title" id="jobTitle">🎮 游戏开发工程师</p>
+            <p class="bio" id="bio">
                 热爱游戏开发，专注于 Unity 引擎和图形渲染技术。<br>
                 相信代码可以创造无限可能，用技术构建有趣的虚拟世界。
             </p>
-            <div class="social-links">
+            <div class="social-links" id="socialLinks">
                 <a href="https://github.com/CN1Smile" target="_blank" class="social-link">
                     <span>📦</span> GitHub
                 </a>
                 <a href="mailto:your-email@example.com" class="social-link">
                     <span>📧</span> 邮箱
-                </a>
-                <a href="#" class="social-link">
-                    <span>💬</span> 微信
                 </a>
             </div>
         </div>
@@ -270,81 +296,40 @@
         <!-- 关于我 -->
         <section class="about-section">
             <h2>👋 关于我</h2>
-            <p>
-                你好！我是张志通，一名游戏开发工程师。从小热爱游戏，大学期间开始接触游戏开发，
-                从此踏上了用代码创造虚拟世界的道路。
-            </p>
-            <p>
-                目前主要从事 Unity 游戏开发工作，对图形渲染、Shader 编程和游戏架构设计有浓厚兴趣。
-                业余时间喜欢研究新技术、写技术博客、参加 Game Jam。
-            </p>
-            <p>
-                这个博客记录了我在游戏开发路上的学习笔记和实践心得，希望能对你有所帮助！
-            </p>
+            <div id="aboutMeContent">
+                <p>
+                    你好！我是张志通，一名游戏开发工程师。从小热爱游戏，大学期间开始接触游戏开发，
+                    从此踏上了用代码创造虚拟世界的道路。
+                </p>
+                <p>
+                    目前主要从事 Unity 游戏开发工作，对图形渲染、Shader 编程和游戏架构设计有浓厚兴趣。
+                    业余时间喜欢研究新技术、写技术博客、参加 Game Jam。
+                </p>
+                <p>
+                    这个博客记录了我在游戏开发路上的学习笔记和实践心得，希望能对你有所帮助！
+                </p>
+            </div>
         </section>
 
         <!-- 技能 -->
         <section class="about-section">
             <h2>🛠️ 技术栈</h2>
-            <div class="skills-grid">
-                <div class="skill-item">
-                    <div class="icon">🎮</div>
-                    <div class="name">Unity</div>
-                    <div class="level">精通</div>
-                </div>
-                <div class="skill-item">
-                    <div class="icon">💻</div>
-                    <div class="name">C#</div>
-                    <div class="level">精通</div>
-                </div>
-                <div class="skill-item">
-                    <div class="icon">🎨</div>
-                    <div class="name">Shader</div>
-                    <div class="level">熟练</div>
-                </div>
-                <div class="skill-item">
-                    <div class="icon">🖼️</div>
-                    <div class="name">图形学</div>
-                    <div class="level">熟练</div>
-                </div>
-                <div class="skill-item">
-                    <div class="icon">🔧</div>
-                    <div class="name">工具开发</div>
-                    <div class="level">熟练</div>
-                </div>
-                <div class="skill-item">
-                    <div class="icon">📱</div>
-                    <div class="name">移动端优化</div>
-                    <div class="level">熟练</div>
-                </div>
+            <div class="skills-grid" id="skillsGrid">
+                <!-- 动态加载 -->
             </div>
         </section>
 
         <!-- 经历 -->
         <section class="about-section">
             <h2>📅 经历</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="year">2024 - 至今</div>
-                    <div class="title">游戏开发工程师</div>
-                    <div class="desc">负责游戏客户端开发和渲染优化</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="year">2022 - 2024</div>
-                    <div class="title">Unity 开发实习生</div>
-                    <div class="desc">参与多款移动游戏的开发工作</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="year">2020</div>
-                    <div class="title">开始学习游戏开发</div>
-                    <div class="desc">自学 Unity，完成第一个小游戏</div>
-                </div>
+            <div class="timeline" id="timeline">
+                <!-- 动态加载 -->
             </div>
         </section>
 
         <!-- 联系我 -->
         <section class="about-section">
-            <h2>📮 联系我</h2>
+            <h2>� 联系我</h2>
             <p>如果你有任何问题、建议或合作想法，欢迎联系我！</p>
             <form class="contact-form" id="contactForm">
                 <input type="text" placeholder="你的名字" required>
@@ -356,11 +341,106 @@
     </main>
 
     <script>
+        // 默认数据
+        const defaultData = {
+            avatarText: '张',
+            name: '张志通',
+            jobTitle: '🎮 游戏开发工程师',
+            bio: '热爱游戏开发，专注于 Unity 引擎和图形渲染技术。\n相信代码可以创造无限可能，用技术构建有趣的虚拟世界。',
+            github: 'https://github.com/CN1Smile',
+            email: 'your-email@example.com',
+            wechat: '',
+            aboutMe: '你好！我是张志通，一名游戏开发工程师。从小热爱游戏，大学期间开始接触游戏开发，从此踏上了用代码创造虚拟世界的道路。\n\n目前主要从事 Unity 游戏开发工作，对图形渲染、Shader 编程和游戏架构设计有浓厚兴趣。业余时间喜欢研究新技术、写技术博客、参加 Game Jam。\n\n这个博客记录了我在游戏开发路上的学习笔记和实践心得，希望能对你有所帮助！',
+            skills: [
+                { icon: '🎮', name: 'Unity', level: '精通' },
+                { icon: '💻', name: 'C#', level: '精通' },
+                { icon: '🎨', name: 'Shader', level: '熟练' },
+                { icon: '🖼️', name: '图形学', level: '熟练' },
+                { icon: '🔧', name: '工具开发', level: '熟练' },
+                { icon: '📱', name: '移动端优化', level: '熟练' }
+            ],
+            experiences: [
+                { year: '2024 - 至今', title: '游戏开发工程师', desc: '负责游戏客户端开发和渲染优化' },
+                { year: '2022 - 2024', title: 'Unity 开发实习生', desc: '参与多款移动游戏的开发工作' },
+                { year: '2020', title: '开始学习游戏开发', desc: '自学 Unity，完成第一个小游戏' }
+            ]
+        };
+        
+        // 加载个人资料
+        async function loadProfile() {
+            let data = defaultData;
+            
+            try {
+                const response = await fetch('data/about-config.json');
+                if (response.ok) {
+                    data = await response.json();
+                }
+            } catch (error) {
+                console.log('使用默认数据');
+            }
+            
+            applyProfile(data);
+        }
+        
+        // 应用数据到页面
+        function applyProfile(data) {
+            // 基本信息
+            document.getElementById('avatar').textContent = data.avatarText || '张';
+            document.getElementById('userName').textContent = data.name || '张志通';
+            document.getElementById('jobTitle').textContent = data.jobTitle || '🎮 游戏开发工程师';
+            
+            // 简介
+            const bio = data.bio || '';
+            document.getElementById('bio').innerHTML = bio.replace(/\n/g, '<br>');
+            
+            // 社交链接
+            const socialLinks = document.getElementById('socialLinks');
+            let linksHtml = '';
+            if (data.github) {
+                linksHtml += `<a href="${data.github}" target="_blank" class="social-link"><span>📦</span> GitHub</a>`;
+            }
+            if (data.email) {
+                linksHtml += `<a href="mailto:${data.email}" class="social-link"><span>📧</span> 邮箱</a>`;
+            }
+            if (data.wechat) {
+                linksHtml += `<a href="#" class="social-link" onclick="alert('微信: ${data.wechat}'); return false;"><span>💬</span> 微信</a>`;
+            }
+            socialLinks.innerHTML = linksHtml;
+            
+            // 关于我
+            const aboutMe = data.aboutMe || '';
+            const paragraphs = aboutMe.split(/\n\n+/);
+            document.getElementById('aboutMeContent').innerHTML = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+            
+            // 技能
+            const skills = data.skills || [];
+            document.getElementById('skillsGrid').innerHTML = skills.map(skill => `
+                <div class="skill-item">
+                    <div class="icon">${skill.icon}</div>
+                    <div class="name">${skill.name}</div>
+                    <div class="level">${skill.level}</div>
+                </div>
+            `).join('');
+            
+            // 经历
+            const experiences = data.experiences || [];
+            document.getElementById('timeline').innerHTML = experiences.map(exp => `
+                <div class="timeline-item">
+                    <div class="year">${exp.year}</div>
+                    <div class="exp-title">${exp.title}</div>
+                    <div class="desc">${exp.desc}</div>
+                </div>
+            `).join('');
+        }
+        
         // 联系表单提交
         document.getElementById('contactForm').addEventListener('submit', (e) => {
             e.preventDefault();
             alert('感谢你的留言！由于这是静态博客，消息功能暂未开放。你可以通过邮箱或社交媒体联系我。');
         });
+        
+        // 初始化
+        loadProfile();
     </script>
 </body>
 </html>

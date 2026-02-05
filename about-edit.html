@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑个人资料 - ZHITONG'S BLOG</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .edit-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 6rem;
+        }
+        
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .edit-header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .edit-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .edit-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-purple);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 技能和经历列表 */
+        .list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .list-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .list-item input {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .list-item input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .list-item .delete-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.75rem;
+        }
+        
+        .add-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+        
+        /* 按钮 */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-save {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-cancel {
+            padding: 1rem 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn-cancel:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        /* 密码弹窗 */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .password-modal.active {
+            display: flex;
+        }
+        
+        .password-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .password-content h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .password-content input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .password-content .btn-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .password-content button {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .password-content .btn-confirm {
+            background: var(--accent-purple);
+            border: none;
+            color: white;
+        }
+        
+        .password-content .btn-close {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            top: 5rem;
+            right: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            display: none;
+        }
+        
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 密码验证弹窗 -->
+    <div id="passwordModal" class="password-modal active">
+        <div class="password-content">
+            <h3>🔐 请输入管理密码</h3>
+            <input type="password" id="passwordInput" placeholder="输入密码" onkeypress="if(event.key==='Enter')verifyPassword()">
+            <div class="btn-row">
+                <button class="btn-close" onclick="window.location.href='about.html'">取消</button>
+                <button class="btn-confirm" onclick="verifyPassword()">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">ZHITONG'S BLOG</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="posts.html" class="nav-link">文章</a>
+            <a href="columns.html" class="nav-link">专栏</a>
+            <a href="about.html" class="nav-link">关于我</a>
+            <a href="settings.html" class="nav-link">⚙️</a>
+        </div>
+    </header>
+
+    <main class="edit-container" id="editContainer" style="display: none;">
+        <div class="edit-header">
+            <h1>✏️ 编辑个人资料</h1>
+        </div>
+
+        <!-- 基本信息 -->
+        <section class="edit-section">
+            <h2>👤 基本信息</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>头像文字</label>
+                    <input type="text" id="avatarText" placeholder="如：张" maxlength="2">
+                </div>
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" id="name" placeholder="你的名字">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>职业标题</label>
+                <input type="text" id="jobTitle" placeholder="如：🎮 游戏开发工程师">
+            </div>
+            <div class="form-group">
+                <label>个人简介</label>
+                <textarea id="bio" placeholder="简短介绍一下自己..."></textarea>
+            </div>
+        </section>
+
+        <!-- 社交链接 -->
+        <section class="edit-section">
+            <h2>🔗 社交链接</h2>
+            <div class="form-group">
+                <label>GitHub</label>
+                <input type="url" id="github" placeholder="https://github.com/username">
+            </div>
+            <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" id="email" placeholder="your-email@example.com">
+            </div>
+            <div class="form-group">
+                <label>微信（显示文本）</label>
+                <input type="text" id="wechat" placeholder="如：微信号或二维码链接">
+            </div>
+        </section>
+
+        <!-- 关于我介绍 -->
+        <section class="edit-section">
+            <h2>👋 关于我介绍</h2>
+            <div class="form-group">
+                <label>详细介绍（支持多段落，用空行分隔）</label>
+                <textarea id="aboutMe" style="min-height: 150px;" placeholder="写一段详细的自我介绍..."></textarea>
+            </div>
+        </section>
+
+        <!-- 技能列表 -->
+        <section class="edit-section">
+            <h2>🛠️ 技术栈</h2>
+            <div class="list-items" id="skillsList">
+                <!-- 动态生成 -->
+            </div>
+            <button class="add-btn" onclick="addSkill()">+ 添加技能</button>
+        </section>
+
+        <!-- 经历 -->
+        <section class="edit-section">
+            <h2>📅 经历</h2>
+            <div class="list-items" id="experienceList">
+                <!-- 动态生成 -->
+            </div>
+            <button class="add-btn" onclick="addExperience()">+ 添加经历</button>
+        </section>
+
+        <div class="actions">
+            <a href="about.html" class="btn-cancel">取消</a>
+            <button class="btn-save" onclick="saveProfile()">💾 保存更改</button>
+        </div>
+    </main>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/github-storage.js"></script>
+    <script>
+        const ADMIN_PASSWORD = 'tong951008';
+        let profileData = {};
+        
+        // 验证密码
+        function verifyPassword() {
+            const input = document.getElementById('passwordInput');
+            if (input.value === ADMIN_PASSWORD) {
+                document.getElementById('passwordModal').classList.remove('active');
+                document.getElementById('editContainer').style.display = 'block';
+                loadProfile();
+            } else {
+                alert('密码错误');
+                input.value = '';
+            }
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 加载个人资料
+        async function loadProfile() {
+            try {
+                const response = await fetch('data/about-config.json');
+                if (response.ok) {
+                    profileData = await response.json();
+                    applyProfileToForm(profileData);
+                } else {
+                    // 使用默认数据
+                    applyDefaultProfile();
+                }
+            } catch (error) {
+                console.log('加载个人资料失败，使用默认数据');
+                applyDefaultProfile();
+            }
+        }
+        
+        // 应用默认数据
+        function applyDefaultProfile() {
+            profileData = {
+                avatarText: '张',
+                name: '张志通',
+                jobTitle: '🎮 游戏开发工程师',
+                bio: '热爱游戏开发，专注于 Unity 引擎和图形渲染技术。\n相信代码可以创造无限可能，用技术构建有趣的虚拟世界。',
+                github: 'https://github.com/CN1Smile',
+                email: 'your-email@example.com',
+                wechat: '',
+                aboutMe: '你好！我是张志通，一名游戏开发工程师。从小热爱游戏，大学期间开始接触游戏开发，从此踏上了用代码创造虚拟世界的道路。\n\n目前主要从事 Unity 游戏开发工作，对图形渲染、Shader 编程和游戏架构设计有浓厚兴趣。业余时间喜欢研究新技术、写技术博客、参加 Game Jam。\n\n这个博客记录了我在游戏开发路上的学习笔记和实践心得，希望能对你有所帮助！',
+                skills: [
+                    { icon: '🎮', name: 'Unity', level: '精通' },
+                    { icon: '💻', name: 'C#', level: '精通' },
+                    { icon: '🎨', name: 'Shader', level: '熟练' },
+                    { icon: '🖼️', name: '图形学', level: '熟练' },
+                    { icon: '🔧', name: '工具开发', level: '熟练' },
+                    { icon: '📱', name: '移动端优化', level: '熟练' }
+                ],
+                experiences: [
+                    { year: '2024 - 至今', title: '游戏开发工程师', desc: '负责游戏客户端开发和渲染优化' },
+                    { year: '2022 - 2024', title: 'Unity 开发实习生', desc: '参与多款移动游戏的开发工作' },
+                    { year: '2020', title: '开始学习游戏开发', desc: '自学 Unity，完成第一个小游戏' }
+                ]
+            };
+            applyProfileToForm(profileData);
+        }
+        
+        // 应用数据到表单
+        function applyProfileToForm(data) {
+            document.getElementById('avatarText').value = data.avatarText || '';
+            document.getElementById('name').value = data.name || '';
+            document.getElementById('jobTitle').value = data.jobTitle || '';
+            document.getElementById('bio').value = data.bio || '';
+            document.getElementById('github').value = data.github || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('wechat').value = data.wechat || '';
+            document.getElementById('aboutMe').value = data.aboutMe || '';
+            
+            // 渲染技能列表
+            renderSkills(data.skills || []);
+            
+            // 渲染经历列表
+            renderExperiences(data.experiences || []);
+        }
+        
+        // 渲染技能列表
+        function renderSkills(skills) {
+            const container = document.getElementById('skillsList');
+            container.innerHTML = skills.map((skill, i) => `
+                <div class="list-item" data-index="${i}">
+                    <input type="text" value="${skill.icon}" placeholder="图标" style="max-width: 60px;" onchange="updateSkill(${i}, 'icon', this.value)">
+                    <input type="text" value="${skill.name}" placeholder="技能名称" onchange="updateSkill(${i}, 'name', this.value)">
+                    <input type="text" value="${skill.level}" placeholder="熟练度" style="max-width: 80px;" onchange="updateSkill(${i}, 'level', this.value)">
+                    <button class="delete-btn" onclick="deleteSkill(${i})">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        // 添加技能
+        function addSkill() {
+            if (!profileData.skills) profileData.skills = [];
+            profileData.skills.push({ icon: '⭐', name: '', level: '熟练' });
+            renderSkills(profileData.skills);
+        }
+        
+        // 更新技能
+        function updateSkill(index, field, value) {
+            if (profileData.skills && profileData.skills[index]) {
+                profileData.skills[index][field] = value;
+            }
+        }
+        
+        // 删除技能
+        function deleteSkill(index) {
+            if (profileData.skills) {
+                profileData.skills.splice(index, 1);
+                renderSkills(profileData.skills);
+            }
+        }
+        
+        // 渲染经历列表
+        function renderExperiences(experiences) {
+            const container = document.getElementById('experienceList');
+            container.innerHTML = experiences.map((exp, i) => `
+                <div class="list-item" data-index="${i}" style="flex-wrap: wrap;">
+                    <input type="text" value="${exp.year}" placeholder="时间" style="max-width: 120px;" onchange="updateExp(${i}, 'year', this.value)">
+                    <input type="text" value="${exp.title}" placeholder="职位/事件" onchange="updateExp(${i}, 'title', this.value)">
+                    <input type="text" value="${exp.desc}" placeholder="描述" style="flex: 2;" onchange="updateExp(${i}, 'desc', this.value)">
+                    <button class="delete-btn" onclick="deleteExp(${i})">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        // 添加经历
+        function addExperience() {
+            if (!profileData.experiences) profileData.experiences = [];
+            profileData.experiences.push({ year: '', title: '', desc: '' });
+            renderExperiences(profileData.experiences);
+        }
+        
+        // 更新经历
+        function updateExp(index, field, value) {
+            if (profileData.experiences && profileData.experiences[index]) {
+                profileData.experiences[index][field] = value;
+            }
+        }
+        
+        // 删除经历
+        function deleteExp(index) {
+            if (profileData.experiences) {
+                profileData.experiences.splice(index, 1);
+                renderExperiences(profileData.experiences);
+            }
+        }
+        
+        // 保存个人资料
+        async function saveProfile() {
+            // 收集表单数据
+            const data = {
+                avatarText: document.getElementById('avatarText').value,
+                name: document.getElementById('name').value,
+                jobTitle: document.getElementById('jobTitle').value,
+                bio: document.getElementById('bio').value,
+                github: document.getElementById('github').value,
+                email: document.getElementById('email').value,
+                wechat: document.getElementById('wechat').value,
+                aboutMe: document.getElementById('aboutMe').value,
+                skills: profileData.skills || [],
+                experiences: profileData.experiences || []
+            };
+            
+            try {
+                const token = localStorage.getItem('github_token');
+                if (!token) {
+                    const inputToken = prompt('请输入 GitHub Token:');
+                    if (!inputToken) return;
+                    localStorage.setItem('github_token', inputToken);
+                }
+                
+                await GitHubStorage.saveFile('data/about-config.json', data, '更新个人资料');
+                showToast('✅ 保存成功！');
+                
+                // 2秒后跳转
+                setTimeout(() => {
+                    window.location.href = 'about.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('保存失败:', error);
+                alert('保存失败: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
