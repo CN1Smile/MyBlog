@@ -344,9 +344,61 @@ function initFilterTags() {
     });
 }
 
+/**
+ * 滚动到文章列表区域
+ */
+function scrollToPosts() {
+    const postsSection = document.querySelector('.posts-section');
+    if (postsSection) {
+        postsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * 打开订阅弹窗
+ */
+function openSubscribeModal() {
+    const modal = document.getElementById('subscribeModal');
+    if (modal) modal.classList.add('active');
+}
+
+/**
+ * 关闭订阅弹窗
+ */
+function closeSubscribeModal() {
+    const modal = document.getElementById('subscribeModal');
+    if (modal) modal.classList.remove('active');
+}
+
+/**
+ * 初始化最新笔记阅读按钮
+ */
+function initLatestNoteBtn() {
+    const btn = document.getElementById('latestNoteBtn');
+    if (btn && allPosts.length > 0) {
+        // 跳转到最新文章
+        btn.addEventListener('click', () => {
+            const latestPost = allPosts[0];
+            if (latestPost) {
+                window.location.href = `post.html?slug=${latestPost.slug}`;
+            }
+        });
+    }
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     loadSiteConfig(); // 先加载站点配置
-    loadPosts();
+    loadPosts().then(() => {
+        initLatestNoteBtn(); // 文章加载完成后初始化按钮
+    });
     initFilterTags();
+    
+    // 点击弹窗外部关闭
+    const modal = document.getElementById('subscribeModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeSubscribeModal();
+        });
+    }
 });

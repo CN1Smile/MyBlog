@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 - ZHITONG'S BLOG</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 6rem;
+        }
+        
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+        }
+        
+        .about-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .about-header .title {
+            color: var(--accent-purple);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .about-header .bio {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .social-link:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+        
+        .about-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .about-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .about-section p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        
+        .about-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .skill-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        
+        .skill-item:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        .skill-item .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-item .name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .skill-item .level {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            border: 2px solid var(--bg-primary);
+        }
+        
+        .timeline-item .year {
+            font-size: 0.85rem;
+            color: var(--accent-purple);
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-item .title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-item .desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .contact-form button {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .contact-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">ZHITONG'S BLOG</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="posts.html" class="nav-link">文章</a>
+            <a href="columns.html" class="nav-link">专栏</a>
+            <a href="about.html" class="nav-link active">关于我</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+            <a href="settings.html" class="nav-link">⚙️</a>
+        </div>
+    </header>
+
+    <main class="about-container">
+        <!-- 头像和基本信息 -->
+        <div class="about-header">
+            <div class="avatar-large">张</div>
+            <h1>张志通</h1>
+            <p class="title">🎮 游戏开发工程师</p>
+            <p class="bio">
+                热爱游戏开发，专注于 Unity 引擎和图形渲染技术。<br>
+                相信代码可以创造无限可能，用技术构建有趣的虚拟世界。
+            </p>
+            <div class="social-links">
+                <a href="https://github.com/CN1Smile" target="_blank" class="social-link">
+                    <span>📦</span> GitHub
+                </a>
+                <a href="mailto:your-email@example.com" class="social-link">
+                    <span>📧</span> 邮箱
+                </a>
+                <a href="#" class="social-link">
+                    <span>💬</span> 微信
+                </a>
+            </div>
+        </div>
+
+        <!-- 关于我 -->
+        <section class="about-section">
+            <h2>👋 关于我</h2>
+            <p>
+                你好！我是张志通，一名游戏开发工程师。从小热爱游戏，大学期间开始接触游戏开发，
+                从此踏上了用代码创造虚拟世界的道路。
+            </p>
+            <p>
+                目前主要从事 Unity 游戏开发工作，对图形渲染、Shader 编程和游戏架构设计有浓厚兴趣。
+                业余时间喜欢研究新技术、写技术博客、参加 Game Jam。
+            </p>
+            <p>
+                这个博客记录了我在游戏开发路上的学习笔记和实践心得，希望能对你有所帮助！
+            </p>
+        </section>
+
+        <!-- 技能 -->
+        <section class="about-section">
+            <h2>🛠️ 技术栈</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <div class="icon">🎮</div>
+                    <div class="name">Unity</div>
+                    <div class="level">精通</div>
+                </div>
+                <div class="skill-item">
+                    <div class="icon">💻</div>
+                    <div class="name">C#</div>
+                    <div class="level">精通</div>
+                </div>
+                <div class="skill-item">
+                    <div class="icon">🎨</div>
+                    <div class="name">Shader</div>
+                    <div class="level">熟练</div>
+                </div>
+                <div class="skill-item">
+                    <div class="icon">🖼️</div>
+                    <div class="name">图形学</div>
+                    <div class="level">熟练</div>
+                </div>
+                <div class="skill-item">
+                    <div class="icon">🔧</div>
+                    <div class="name">工具开发</div>
+                    <div class="level">熟练</div>
+                </div>
+                <div class="skill-item">
+                    <div class="icon">📱</div>
+                    <div class="name">移动端优化</div>
+                    <div class="level">熟练</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 经历 -->
+        <section class="about-section">
+            <h2>📅 经历</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="year">2024 - 至今</div>
+                    <div class="title">游戏开发工程师</div>
+                    <div class="desc">负责游戏客户端开发和渲染优化</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="year">2022 - 2024</div>
+                    <div class="title">Unity 开发实习生</div>
+                    <div class="desc">参与多款移动游戏的开发工作</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="year">2020</div>
+                    <div class="title">开始学习游戏开发</div>
+                    <div class="desc">自学 Unity，完成第一个小游戏</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系我 -->
+        <section class="about-section">
+            <h2>📮 联系我</h2>
+            <p>如果你有任何问题、建议或合作想法，欢迎联系我！</p>
+            <form class="contact-form" id="contactForm">
+                <input type="text" placeholder="你的名字" required>
+                <input type="email" placeholder="你的邮箱" required>
+                <textarea placeholder="想说些什么..." required></textarea>
+                <button type="submit">发送消息 ✉️</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // 联系表单提交
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('感谢你的留言！由于这是静态博客，消息功能暂未开放。你可以通过邮箱或社交媒体联系我。');
+        });
+    </script>
+</body>
+</html>

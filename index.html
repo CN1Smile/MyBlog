@@ -5,23 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>张志通 - 游戏开发工程师</title>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* 订阅弹窗 */
+        .subscribe-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .subscribe-modal.active {
+            display: flex;
+        }
+        .subscribe-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .subscribe-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .subscribe-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .subscribe-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .subscribe-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .subscribe-link:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+        }
+        .close-modal {
+            margin-top: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+    </style>
 </head>
 <body>
     <!-- 顶部导航栏 -->
     <header class="top-nav">
         <div class="nav-left">
-            <div class="logo">
+            <a href="index.html" class="logo">
                 <span class="logo-icon">🎮</span>
                 <span class="logo-text">ZHITONG'S BLOG</span>
-            </div>
+            </a>
         </div>
         <div class="nav-right">
             <a href="posts.html" class="nav-link">文章</a>
             <a href="columns.html" class="nav-link">专栏</a>
-            <a href="#" class="nav-link">关于我</a>
+            <a href="about.html" class="nav-link">关于我</a>
             <a href="editor.html" class="nav-link">撰写</a>
             <a href="settings.html" class="nav-link">⚙️</a>
-            <button class="subscribe-btn">✦ 订阅更新</button>
+            <button class="subscribe-btn" onclick="openSubscribeModal()">✦ 订阅更新</button>
         </div>
     </header>
 
@@ -48,8 +116,8 @@
                         <span class="tag">持续更新中</span>
                     </div>
                     <div class="hero-actions">
-                        <button class="btn-primary">开始阅读 ↗</button>
-                        <button class="btn-secondary">查看项目作品</button>
+                        <button class="btn-primary" onclick="scrollToPosts()">开始阅读 ↗</button>
+                        <button class="btn-secondary" onclick="window.open('https://github.com/CN1Smile', '_blank')">查看项目作品</button>
                     </div>
                     <div class="hero-stats">
                         <span><strong>128</strong> 篇文章</span>
@@ -91,7 +159,7 @@
                         <span class="author-name">张志通</span>
                         <span class="author-meta">更新于 5 天前 · 7 min read</span>
                     </div>
-                    <button class="read-btn">阅读 →</button>
+                    <button class="read-btn" id="latestNoteBtn">阅读 →</button>
                 </div>
                 <p class="card-footnote">深入游戏引擎的渲染世界</p>
             </div>
@@ -110,16 +178,16 @@
 
                 <div class="series-section">
                     <h4 class="series-title">进行中的系列</h4>
-                    <ul class="series-list">
-                        <li>
+                    <ul class="series-list" id="seriesList">
+                        <li onclick="window.location.href='columns.html'" style="cursor: pointer;">
                             <span class="series-name">「Unity Shader 从入门到实战」</span>
                             <span class="series-progress">已发布 3/8 篇 · 图形学 · Shader</span>
                         </li>
-                        <li>
+                        <li onclick="window.location.href='columns.html'" style="cursor: pointer;">
                             <span class="series-name">「游戏性能优化指南」</span>
                             <span class="series-progress">已发布 2/5 篇 · 优化 · 实战</span>
                         </li>
-                        <li>
+                        <li onclick="window.location.href='columns.html'" style="cursor: pointer;">
                             <span class="series-name">「独立游戏开发日记」</span>
                             <span class="series-progress">已发布 4/10 篇 · 项目 · 记录</span>
                         </li>
@@ -140,6 +208,26 @@
     <div id="loading" class="loading hidden">
         <div class="loading-spinner"></div>
         <p>加载中...</p>
+    </div>
+
+    <!-- 订阅弹窗 -->
+    <div id="subscribeModal" class="subscribe-modal">
+        <div class="subscribe-content">
+            <h3>✦ 关注我</h3>
+            <p>通过以下方式获取最新文章更新</p>
+            <div class="subscribe-links">
+                <a href="https://github.com/CN1Smile" target="_blank" class="subscribe-link">
+                    <span>📦</span> GitHub - 关注项目更新
+                </a>
+                <a href="about.html" class="subscribe-link">
+                    <span>📧</span> 邮箱联系
+                </a>
+                <a href="columns.html" class="subscribe-link">
+                    <span>📚</span> 浏览专栏系列
+                </a>
+            </div>
+            <button class="close-modal" onclick="closeSubscribeModal()">关闭</button>
+        </div>
     </div>
 
     <script src="js/app.js"></script>
