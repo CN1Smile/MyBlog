@@ -80,9 +80,11 @@
                     <input type="text" id="tags" placeholder="JavaScript, Vue, 教程" autocomplete="off">
                 </div>
                 <div class="meta-actions">
+                    <button class="btn-secondary" id="btnGithubSettings">⚙️ GitHub</button>
                     <button class="btn-secondary" id="btnCopyJson">📋 复制 JSON</button>
-                    <button class="btn-secondary" id="btnDownload">💾 下载 JSON</button>
-                    <button class="btn-primary" id="btnClearDraft">🗑️ 清除草稿</button>
+                    <button class="btn-secondary" id="btnDownload">💾 下载</button>
+                    <button class="btn-primary" id="btnPublish">🚀 发布</button>
+                    <button class="btn-secondary" id="btnClearDraft">🗑️ 清除</button>
                 </div>
             </div>
         </section>
@@ -141,9 +143,46 @@ console.log('Hello, World!');
         </div>
     </main>
 
+    <!-- GitHub 配置弹窗 -->
+    <div class="github-overlay hidden" id="githubOverlay">
+        <div class="github-dialog">
+            <div class="github-header">
+                <h3>⚙️ GitHub 配置</h3>
+                <button type="button" class="github-close" id="btnCloseGithub">×</button>
+            </div>
+            <form id="githubForm">
+                <div class="github-field">
+                    <label for="githubToken">Personal Access Token</label>
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+                    <small>在 <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub Settings</a> 创建 Token</small>
+                </div>
+                <div class="github-row">
+                    <div class="github-field">
+                        <label for="githubOwner">仓库所有者</label>
+                        <input type="text" id="githubOwner" placeholder="username" autocomplete="off">
+                    </div>
+                    <div class="github-field">
+                        <label for="githubRepo">仓库名称</label>
+                        <input type="text" id="githubRepo" placeholder="my-blog" autocomplete="off">
+                    </div>
+                </div>
+                <div class="github-field">
+                    <label for="githubBranch">分支</label>
+                    <input type="text" id="githubBranch" placeholder="main" autocomplete="off">
+                </div>
+                <div class="github-status" id="githubStatus"></div>
+                <div class="github-actions">
+                    <button type="button" class="btn-secondary" id="btnTestConnection">🔗 测试连接</button>
+                    <button type="submit" class="btn-primary">💾 保存配置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast 提示 -->
     <div class="toast" id="toast"></div>
 
+    <script src="js/github-storage.js"></script>
     <script src="js/editor.js"></script>
 </body>
 </html>

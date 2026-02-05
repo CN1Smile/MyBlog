@@ -39,11 +39,26 @@
         btnCopyJson: document.getElementById('btnCopyJson'),
         btnDownload: document.getElementById('btnDownload'),
         btnClearDraft: document.getElementById('btnClearDraft'),
+        btnPublish: document.getElementById('btnPublish'),
+        btnGithubSettings: document.getElementById('btnGithubSettings'),
         toast: document.getElementById('toast'),
         
         // 工具栏和标签页
         toolbar: document.querySelector('.editor-toolbar'),
         tabBtns: document.querySelectorAll('.tab-btn')
+    };
+
+    // GitHub 弹窗元素
+    const githubElements = {
+        overlay: document.getElementById('githubOverlay'),
+        form: document.getElementById('githubForm'),
+        token: document.getElementById('githubToken'),
+        owner: document.getElementById('githubOwner'),
+        repo: document.getElementById('githubRepo'),
+        branch: document.getElementById('githubBranch'),
+        status: document.getElementById('githubStatus'),
+        btnClose: document.getElementById('btnCloseGithub'),
+        btnTest: document.getElementById('btnTestConnection')
     };
 
     // ========================================
@@ -186,6 +201,16 @@
         elements.btnCopyJson.addEventListener('click', copyJsonToClipboard);
         elements.btnDownload.addEventListener('click', downloadJson);
         elements.btnClearDraft.addEventListener('click', clearDraft);
+        
+        // GitHub 按钮
+        elements.btnGithubSettings.addEventListener('click', openGithubSettings);
+        elements.btnPublish.addEventListener('click', handlePublish);
+        
+        // GitHub 弹窗事件
+        githubElements.btnClose.addEventListener('click', closeGithubSettings);
+        githubElements.overlay.addEventListener('click', handleGithubOverlayClick);
+        githubElements.form.addEventListener('submit', handleGithubSave);
+        githubElements.btnTest.addEventListener('click', handleTestConnection);
         
         // 移动端标签页切换
         elements.tabBtns.forEach(btn => {
@@ -628,6 +653,162 @@
         setTimeout(() => {
             toast.classList.remove('show');
         }, 3000);
+    }
+
+    // ========================================
+    // GitHub 配置功能
+    // ========================================
+    function openGithubSettings() {
+        // 加载已保存的配置
+        if (typeof GitHubStorage !== 'undefined') {
+            const config = GitHubStorage.getConfig();
+            githubElements.token.value = config.token || '';
+            githubElements.owner.value = config.owner || '';
+            githubElements.repo.value = config.repo || '';
+            githubElements.branch.value = config.branch || 'main';
+        }
+        
+        // 清除状态
+        setGithubStatus('', '');
+        
+        // 显示弹窗
+        githubElements.overlay.classList.remove('hidden');
+        githubElements.token.focus();
+    }
+
+    function closeGithubSettings() {
+        githubElements.overlay.classList.add('hidden');
+    }
+
+    function handleGithubOverlayClick(e) {
+        if (e.target === githubElements.overlay) {
+            closeGithubSettings();
+        }
+    }
+
+    function setGithubStatus(message, type) {
+        const status = githubElements.status;
+        status.textContent = message;
+        status.className = 'github-status';
+        
+        if (message) {
+            status.classList.add('show', type);
+        }
+    }
+
+    function handleGithubSave(e) {
+        e.preventDefault();
+        
+        const config = {
+            token: githubElements.token.value.trim(),
+            owner: githubElements.owner.value.trim(),
+            repo: githubElements.repo.value.trim(),
+            branch: githubElements.branch.value.trim() || 'main'
+        };
+
+        if (!config.token || !config.owner || !config.repo) {
+            setGithubStatus('请填写完整的配置信息', 'error');
+            return;
+        }
+
+        if (typeof GitHubStorage !== 'undefined') {
+            GitHubStorage.saveConfig(config);
+            setGithubStatus('配置已保存', 'success');
+            showToast('GitHub 配置已保存', 'success');
+            
+            setTimeout(() => {
+                closeGithubSettings();
+            }, 1000);
+        } else {
+            setGithubStatus('GitHubStorage 模块未加载', 'error');
+        }
+    }
+
+    async function handleTestConnection() {
+        if (typeof GitHubStorage === 'undefined') {
+            setGithubStatus('GitHubStorage 模块未加载', 'error');
+            return;
+        }
+
+        // 先临时保存配置用于测试
+        const config = {
+            token: githubElements.token.value.trim(),
+            owner: githubElements.owner.value.trim(),
+            repo: githubElements.repo.value.trim(),
+            branch: githubElements.branch.value.trim() || 'main'
+        };
+
+        if (!config.token || !config.owner || !config.repo) {
+            setGithubStatus('请填写完整的配置信息', 'error');
+            return;
+        }
+
+        // 临时保存以便测试
+        GitHubStorage.saveConfig(config);
+        
+        setGithubStatus('正在测试连接...', 'loading');
+        
+        try {
+            const result = await GitHubStorage.testConnection();
+            setGithubStatus(`✅ 连接成功: ${result.repoName}`, 'success');
+        } catch (error) {
+            setGithubStatus(`❌ ${error.message}`, 'error');
+        }
+    }
+
+    async function handlePublish() {
+        if (typeof GitHubStorage === 'undefined') {
+            showToast('GitHubStorage 模块未加载', 'error');
+            return;
+        }
+
+        // 检查是否配置
+        if (!GitHubStorage.isConfigured()) {
+            showToast('请先配置 GitHub', 'error');
+            openGithubSettings();
+            return;
+        }
+
+        // 验证文章内容
+        const title = elements.title.value.trim();
+        const content = elements.markdownInput.value.trim();
+        
+        if (!title) {
+            showToast('请填写文章标题', 'error');
+            elements.title.focus();
+            return;
+        }
+
+        if (!content) {
+            showToast('请填写文章内容', 'error');
+            elements.markdownInput.focus();
+            return;
+        }
+
+        // 生成文章数据
+        const post = generatePostJson();
+
+        // 禁用按钮，显示发布中状态
+        elements.btnPublish.disabled = true;
+        elements.btnPublish.textContent = '⏳ 发布中...';
+
+        try {
+            const result = await GitHubStorage.publishPost(post);
+            showToast(result.message, 'success');
+            
+            // 清除草稿
+            localStorage.removeItem(STORAGE_KEY);
+            hasUnsavedChanges = false;
+            updateSaveStatus('saved');
+            
+        } catch (error) {
+            console.error('Publish error:', error);
+            showToast(`发布失败: ${error.message}`, 'error');
+        } finally {
+            // 恢复按钮状态
+            elements.btnPublish.disabled = false;
+            elements.btnPublish.textContent = '🚀 发布';
+        }
     }
 
     // ========================================
