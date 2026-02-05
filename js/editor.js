@@ -26,6 +26,8 @@
         slug: document.getElementById('slug'),
         excerpt: document.getElementById('excerpt'),
         category: document.getElementById('category'),
+        column: document.getElementById('column'),
+        columnList: document.getElementById('columnList'),
         tags: document.getElementById('tags'),
         markdownInput: document.getElementById('markdownInput'),
         
@@ -68,6 +70,7 @@
     let autoSaveTimer = null;
     let previewDebounceTimer = null;
     let editingSlug = null; // 正在编辑的文章 slug（为 null 表示新建）
+    let existingColumns = []; // 已存在的专栏列表
 
     // ========================================
     // 密码验证
@@ -144,6 +147,9 @@
         // 绑定事件
         bindEvents();
         
+        // 加载专栏列表
+        loadColumns();
+        
         // 检查是否是编辑模式（URL 带有 slug 参数）
         const urlParams = new URLSearchParams(window.location.search);
         const slugParam = urlParams.get('slug');
@@ -160,6 +166,98 @@
         startAutoSave();
         
         console.log('Editor initialized');
+    }
+
+    // ========================================
+    // 专栏功能
+    // ========================================
+    async function loadColumns() {
+        try {
+            // 尝试从本地获取
+            const response = await fetch('data/columns.json');
+            if (response.ok) {
+                const data = await response.json();
+                existingColumns = data.columns || [];
+                updateColumnDatalist();
+            }
+        } catch (e) {
+            console.log('加载专栏列表失败', e);
+        }
+        
+        // 同时尝试从 GitHub 获取最新数据
+        if (typeof GitHubStorage !== 'undefined' && GitHubStorage.isConfigured()) {
+            try {
+                const columns = await GitHubStorage.getColumns();
+                existingColumns = columns;
+                updateColumnDatalist();
+            } catch (e) {
+                console.log('从 GitHub 获取专栏失败', e);
+            }
+        }
+    }
+
+    function updateColumnDatalist() {
+        if (!elements.columnList) return;
+        
+        const options = existingColumns.map(col => 
+            `<option value="${col.name}">`
+        ).join('');
+        
+        elements.columnList.innerHTML = options;
+    }
+
+    function getColumnSlugFromName(name) {
+        if (!name) return null;
+        
+        // 检查是否是现有专栏
+        const existing = existingColumns.find(c => 
+            c.name === name || c.slug === name
+        );
+        
+        if (existing) {
+            return existing.slug;
+        }
+        
+        // 生成新的 slug
+        return name.toLowerCase()
+            .trim()
+            .replace(/[\s\-_]+/g, '-')
+            .replace(/[^\u4e00-\u9fa5a-z0-9\-]/g, '')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    async function ensureColumnExists(columnName) {
+        if (!columnName) return null;
+        
+        const slug = getColumnSlugFromName(columnName);
+        
+        // 检查是否已存在
+        const exists = existingColumns.find(c => c.slug === slug);
+        if (exists) {
+            return slug;
+        }
+        
+        // 自动创建新专栏
+        if (typeof GitHubStorage !== 'undefined' && GitHubStorage.isConfigured()) {
+            try {
+                await GitHubStorage.createColumn({
+                    name: columnName,
+                    slug: slug,
+                    description: '',
+                    icon: '📚'
+                });
+                
+                // 刷新专栏列表
+                existingColumns.push({ name: columnName, slug, description: '', icon: '📚' });
+                updateColumnDatalist();
+                
+                showToast(`已创建专栏: ${columnName}`, 'success');
+            } catch (e) {
+                console.error('创建专栏失败:', e);
+            }
+        }
+        
+        return slug;
     }
 
     // ========================================
@@ -598,7 +696,7 @@
     // ========================================
     // 导出功能
     // ========================================
-    function generatePostJson() {
+    function generatePostJson(columnSlug = null) {
         const now = new Date();
         const dateStr = now.toISOString().split('T')[0];
         
@@ -615,7 +713,7 @@
         // 使用 summary 字段（首页列表使用）
         const summary = elements.excerpt.value || content.substring(0, 150) + '...';
         
-        return {
+        const post = {
             slug: elements.slug.value || generateSlug(elements.title.value),
             title: elements.title.value,
             date: dateStr,
@@ -626,6 +724,13 @@
             readTime: `${readTime} min read`,
             icon: getCategoryIcon(elements.category.value)
         };
+        
+        // 添加专栏信息
+        if (columnSlug) {
+            post.column = columnSlug;
+        }
+        
+        return post;
     }
 
     function getCategoryIcon(category) {
@@ -850,14 +955,22 @@
             return;
         }
 
-        // 生成文章数据
-        const post = generatePostJson();
-
         // 禁用按钮，显示发布中状态
         elements.btnPublish.disabled = true;
         elements.btnPublish.textContent = '⏳ 发布中...';
 
         try {
+            // 处理专栏：如果填写了专栏名称，确保专栏存在
+            let columnSlug = null;
+            const columnName = elements.column ? elements.column.value.trim() : '';
+            
+            if (columnName) {
+                columnSlug = await ensureColumnExists(columnName);
+            }
+            
+            // 生成文章数据（包含专栏信息）
+            const post = generatePostJson(columnSlug);
+
             const result = await GitHubStorage.publishPost(post);
             showToast(result.message + ' 正在跳转...', 'success');
             

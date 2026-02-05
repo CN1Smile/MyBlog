@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专栏 - ZHITONG'S BLOG</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .columns-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .columns-header {
+            margin-bottom: 2rem;
+        }
+        
+        .columns-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .columns-header p {
+            color: var(--text-secondary);
+        }
+        
+        .columns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .column-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .column-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .column-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .column-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .column-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .column-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .column-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .column-stats .count {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .loading-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+        
+        /* 专栏文章列表视图 */
+        .column-view {
+            display: none;
+        }
+        
+        .column-view.active {
+            display: block;
+        }
+        
+        .column-view-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        .column-view-info {
+            flex: 1;
+        }
+        
+        .column-view-info h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .column-view-info p {
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .posts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .post-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+        
+        .post-item:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        .post-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .post-info h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        .post-info h3 a:hover {
+            color: var(--accent-purple);
+        }
+        
+        .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .post-actions a {
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">ZHITONG'S BLOG</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="posts.html" class="nav-link">文章</a>
+            <a href="columns.html" class="nav-link active">专栏</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+            <a href="settings.html" class="nav-link">⚙️</a>
+        </div>
+    </header>
+
+    <main class="columns-container">
+        <!-- 专栏列表视图 -->
+        <div id="columnsListView">
+            <div class="columns-header">
+                <h1>📚 专栏</h1>
+                <p>按主题分类的系列文章，深入探索特定领域</p>
+            </div>
+            
+            <div id="loadingState" class="loading-state">
+                <p>加载中...</p>
+            </div>
+            
+            <div id="columnsGrid" class="columns-grid" style="display: none;">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="icon">📭</div>
+                <h3>暂无专栏</h3>
+                <p>发布文章时选择专栏，即可自动创建</p>
+            </div>
+        </div>
+        
+        <!-- 专栏详情视图 -->
+        <div id="columnView" class="column-view">
+            <div class="column-view-header">
+                <a href="columns.html" class="back-btn">← 返回专栏</a>
+                <div class="column-view-info">
+                    <h2><span id="columnIcon"></span> <span id="columnName"></span></h2>
+                    <p id="columnDesc"></p>
+                </div>
+            </div>
+            
+            <div id="columnPosts" class="posts-list">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div id="columnEmpty" class="empty-state" style="display: none;">
+                <div class="icon">📝</div>
+                <h3>该专栏暂无文章</h3>
+                <p>快去撰写文章并加入此专栏吧</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/github-storage.js"></script>
+    <script src="js/columns.js"></script>
+</body>
+</html>

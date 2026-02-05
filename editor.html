@@ -39,7 +39,8 @@
         <div class="nav-right">
             <a href="index.html" class="nav-link">首页</a>
             <a href="posts.html" class="nav-link">文章</a>
-            <a href="#" class="nav-link">关于我</a>
+            <a href="columns.html" class="nav-link">专栏</a>
+            <a href="settings.html" class="nav-link">⚙️</a>
             <span class="save-status" id="saveStatus">未保存</span>
         </div>
     </header>
@@ -72,6 +73,14 @@
                         <option value="thinking">系统化思考</option>
                         <option value="essay">随笔</option>
                     </select>
+                </div>
+                <div class="meta-field">
+                    <label for="column">专栏</label>
+                    <div class="column-input-wrapper">
+                        <input type="text" id="column" list="columnList" placeholder="选择或输入新专栏..." autocomplete="off">
+                        <datalist id="columnList"></datalist>
+                    </div>
+                    <small class="field-hint">输入新名称可自动创建专栏</small>
                 </div>
             </div>
             <div class="meta-row">

@@ -12,6 +12,7 @@ const GitHubStorage = (function() {
     const STORAGE_KEY = 'github_config';
     const API_BASE = 'https://api.github.com';
     const DATA_PATH = 'data/posts.json';
+    const COLUMNS_PATH = 'data/columns.json';
 
     // 默认配置（你可以修改这里的默认值）
     const DEFAULT_CONFIG = {
@@ -330,6 +331,146 @@ const GitHubStorage = (function() {
     }
 
     // ========================================
+    // 专栏相关 API
+    // ========================================
+    
+    // 获取专栏文件内容
+    async function getColumnsFileContent() {
+        const config = getConfig();
+        const endpoint = `/repos/${config.owner}/${config.repo}/contents/${COLUMNS_PATH}?ref=${config.branch}`;
+        
+        try {
+            const data = await apiRequest(endpoint);
+            const content = atob(data.content.replace(/\n/g, ''));
+            return {
+                content: JSON.parse(content),
+                sha: data.sha
+            };
+        } catch (e) {
+            if (e.message.includes('404') || e.message.includes('Not Found')) {
+                return { content: { columns: [] }, sha: null };
+            }
+            throw e;
+        }
+    }
+
+    // 获取所有专栏
+    async function getColumns() {
+        const { content: data } = await getColumnsFileContent();
+        return data.columns || [];
+    }
+
+    // 创建专栏
+    async function createColumn(column) {
+        if (!column.name) {
+            throw new Error('请填写专栏名称');
+        }
+
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getColumnsFileContent();
+        
+        if (!data.columns) {
+            data.columns = [];
+        }
+
+        // 生成 slug
+        const slug = column.slug || column.name.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-\u4e00-\u9fa5]/g, '');
+
+        // 检查是否已存在
+        if (data.columns.find(c => c.slug === slug)) {
+            throw new Error('该专栏已存在');
+        }
+
+        const newColumn = {
+            slug,
+            name: column.name,
+            description: column.description || '',
+            icon: column.icon || '📁',
+            createdAt: new Date().toISOString()
+        };
+
+        data.columns.push(newColumn);
+
+        await updateFile(COLUMNS_PATH, data, sha, `创建专栏: ${column.name}`);
+
+        return {
+            success: true,
+            column: newColumn,
+            message: '专栏已创建'
+        };
+    }
+
+    // 更新专栏
+    async function updateColumn(slug, updates) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getColumnsFileContent();
+        
+        if (!data.columns) {
+            throw new Error('专栏列表为空');
+        }
+
+        const index = data.columns.findIndex(c => c.slug === slug);
+        if (index === -1) {
+            throw new Error('专栏不存在');
+        }
+
+        data.columns[index] = { ...data.columns[index], ...updates };
+
+        await updateFile(COLUMNS_PATH, data, sha, `更新专栏: ${data.columns[index].name}`);
+
+        return {
+            success: true,
+            column: data.columns[index],
+            message: '专栏已更新'
+        };
+    }
+
+    // 删除专栏
+    async function deleteColumn(slug) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getColumnsFileContent();
+        
+        if (!data.columns) {
+            throw new Error('专栏列表为空');
+        }
+
+        const index = data.columns.findIndex(c => c.slug === slug);
+        if (index === -1) {
+            throw new Error('专栏不存在');
+        }
+
+        const deletedColumn = data.columns[index];
+        data.columns.splice(index, 1);
+
+        await updateFile(COLUMNS_PATH, data, sha, `删除专栏: ${deletedColumn.name}`);
+
+        return {
+            success: true,
+            message: '专栏已删除'
+        };
+    }
+
+    // 根据专栏获取文章
+    async function getPostsByColumn(columnSlug) {
+        const posts = await getPosts();
+        if (!columnSlug || columnSlug === 'all') {
+            return posts;
+        }
+        return posts.filter(p => p.column === columnSlug);
+    }
+
+    // ========================================
     // 公开 API
     // ========================================
     return {
@@ -344,7 +485,13 @@ const GitHubStorage = (function() {
         deletePost,
         batchDeletePosts,
         reorderPosts,
-        movePost
+        movePost,
+        // 专栏 API
+        getColumns,
+        createColumn,
+        updateColumn,
+        deleteColumn,
+        getPostsByColumn
     };
 })();
 
