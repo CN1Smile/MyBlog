@@ -67,6 +67,7 @@
     let hasUnsavedChanges = false;
     let autoSaveTimer = null;
     let previewDebounceTimer = null;
+    let editingSlug = null; // 正在编辑的文章 slug（为 null 表示新建）
 
     // ========================================
     // 密码验证
@@ -143,13 +144,74 @@
         // 绑定事件
         bindEvents();
         
-        // 尝试恢复草稿
-        tryRestoreDraft();
+        // 检查是否是编辑模式（URL 带有 slug 参数）
+        const urlParams = new URLSearchParams(window.location.search);
+        const slugParam = urlParams.get('slug');
+        
+        if (slugParam) {
+            // 编辑模式：加载已有文章
+            loadPostForEdit(slugParam);
+        } else {
+            // 新建模式：尝试恢复草稿
+            tryRestoreDraft();
+        }
         
         // 启动自动保存
         startAutoSave();
         
         console.log('Editor initialized');
+    }
+
+    // ========================================
+    // 加载文章进行编辑
+    // ========================================
+    async function loadPostForEdit(slug) {
+        if (typeof GitHubStorage === 'undefined') {
+            showToast('GitHubStorage 模块未加载', 'error');
+            return;
+        }
+
+        if (!GitHubStorage.isConfigured()) {
+            showToast('请先配置 GitHub', 'error');
+            openGithubSettings();
+            return;
+        }
+
+        showToast('加载文章中...', '');
+        
+        try {
+            const post = await GitHubStorage.getPost(slug);
+            
+            if (!post) {
+                showToast('文章不存在', 'error');
+                return;
+            }
+
+            // 填充表单
+            elements.title.value = post.title || '';
+            elements.slug.value = post.slug || '';
+            elements.slug.dataset.manualEdit = 'true'; // 编辑时不自动生成 slug
+            elements.excerpt.value = post.summary || '';
+            elements.category.value = post.category || 'frontend';
+            elements.tags.value = (post.tags || []).join(', ');
+            elements.markdownInput.value = post.content || '';
+
+            // 设置编辑状态
+            editingSlug = slug;
+            
+            // 更新页面标题
+            document.title = `编辑: ${post.title} - HENGHENG STUDIO`;
+            
+            // 更新预览
+            updatePreview();
+            updateSaveStatus('saved');
+            
+            showToast('文章已加载', 'success');
+            
+        } catch (error) {
+            console.error('Load post error:', error);
+            showToast(`加载失败: ${error.message}`, 'error');
+        }
     }
 
     // ========================================

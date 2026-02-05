@@ -190,6 +190,146 @@ const GitHubStorage = (function() {
     }
 
     // ========================================
+    // 获取所有文章
+    // ========================================
+    async function getPosts() {
+        const { content: data } = await getFileContent(DATA_PATH);
+        return data.posts || [];
+    }
+
+    // ========================================
+    // 获取单篇文章
+    // ========================================
+    async function getPost(slug) {
+        const posts = await getPosts();
+        return posts.find(p => p.slug === slug) || null;
+    }
+
+    // ========================================
+    // 删除单篇文章
+    // ========================================
+    async function deletePost(slug) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getFileContent(DATA_PATH);
+        
+        if (!data.posts) {
+            throw new Error('文章列表为空');
+        }
+
+        const index = data.posts.findIndex(p => p.slug === slug);
+        if (index === -1) {
+            throw new Error('文章不存在');
+        }
+
+        const deletedPost = data.posts[index];
+        data.posts.splice(index, 1);
+
+        await updateFile(DATA_PATH, data, sha, `删除文章: ${deletedPost.title}`);
+
+        return {
+            success: true,
+            message: '文章已删除'
+        };
+    }
+
+    // ========================================
+    // 批量删除文章
+    // ========================================
+    async function batchDeletePosts(slugs) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        if (!slugs || slugs.length === 0) {
+            throw new Error('请选择要删除的文章');
+        }
+
+        const { content: data, sha } = await getFileContent(DATA_PATH);
+        
+        if (!data.posts) {
+            throw new Error('文章列表为空');
+        }
+
+        const slugSet = new Set(slugs);
+        const deletedTitles = [];
+        
+        data.posts = data.posts.filter(p => {
+            if (slugSet.has(p.slug)) {
+                deletedTitles.push(p.title);
+                return false;
+            }
+            return true;
+        });
+
+        await updateFile(DATA_PATH, data, sha, `批量删除 ${deletedTitles.length} 篇文章`);
+
+        return {
+            success: true,
+            count: deletedTitles.length,
+            message: `已删除 ${deletedTitles.length} 篇文章`
+        };
+    }
+
+    // ========================================
+    // 调整文章顺序
+    // ========================================
+    async function reorderPosts(posts) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getFileContent(DATA_PATH);
+        
+        data.posts = posts;
+
+        await updateFile(DATA_PATH, data, sha, '调整文章顺序');
+
+        return {
+            success: true,
+            message: '顺序已更新'
+        };
+    }
+
+    // ========================================
+    // 移动文章位置
+    // ========================================
+    async function movePost(slug, direction) {
+        if (!isConfigured()) {
+            throw new Error('请先配置 GitHub');
+        }
+
+        const { content: data, sha } = await getFileContent(DATA_PATH);
+        
+        if (!data.posts || data.posts.length < 2) {
+            throw new Error('文章数量不足，无法移动');
+        }
+
+        const index = data.posts.findIndex(p => p.slug === slug);
+        if (index === -1) {
+            throw new Error('文章不存在');
+        }
+
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        
+        if (newIndex < 0 || newIndex >= data.posts.length) {
+            throw new Error('已经在边界位置');
+        }
+
+        // 交换位置
+        [data.posts[index], data.posts[newIndex]] = [data.posts[newIndex], data.posts[index]];
+
+        await updateFile(DATA_PATH, data, sha, `移动文章: ${data.posts[newIndex].title}`);
+
+        return {
+            success: true,
+            message: '位置已调整'
+        };
+    }
+
+    // ========================================
     // 公开 API
     // ========================================
     return {
@@ -198,7 +338,13 @@ const GitHubStorage = (function() {
         isConfigured,
         testConnection,
         publishPost,
-        getFileContent
+        getFileContent,
+        getPosts,
+        getPost,
+        deletePost,
+        batchDeletePosts,
+        reorderPosts,
+        movePost
     };
 })();
 

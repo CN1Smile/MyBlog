@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章管理 - HENGHENG STUDIO</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/posts.css">
+</head>
+<body>
+    <!-- 密码验证遮罩层 -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-dialog">
+            <div class="auth-icon">🔐</div>
+            <h2>访问验证</h2>
+            <p>请输入密码以访问管理页面</p>
+            <form id="authForm">
+                <input type="password" id="authPassword" placeholder="输入密码..." autocomplete="off" autofocus>
+                <p class="auth-error" id="authError"></p>
+                <button type="submit" class="btn-primary">验证</button>
+            </form>
+            <a href="index.html" class="auth-back">← 返回首页</a>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">📝</span>
+                <span class="logo-text">HENGHENG STUDIO</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="posts.html" class="nav-link active">文章</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="posts-container">
+        <div class="posts-header">
+            <h1>📋 文章管理</h1>
+            <div class="posts-actions">
+                <button class="btn-secondary" id="btnRefresh">🔄 刷新</button>
+                <button class="btn-primary" id="btnNewPost">✏️ 新建文章</button>
+            </div>
+        </div>
+
+        <!-- 批量操作栏 -->
+        <div class="batch-bar hidden" id="batchBar">
+            <div class="batch-info">
+                <input type="checkbox" id="selectAll" class="checkbox">
+                <label for="selectAll">全选</label>
+                <span class="selected-count" id="selectedCount">已选择 0 篇</span>
+            </div>
+            <div class="batch-actions">
+                <button class="btn-danger" id="btnBatchDelete">🗑️ 批量删除</button>
+            </div>
+        </div>
+
+        <!-- 文章列表 -->
+        <div class="posts-list" id="postsList">
+            <!-- 动态渲染 -->
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>加载中...</p>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state hidden" id="emptyState">
+            <div class="empty-icon">📭</div>
+            <h3>暂无文章</h3>
+            <p>点击上方"新建文章"开始创作吧！</p>
+        </div>
+    </main>
+
+    <!-- 确认弹窗 -->
+    <div class="confirm-overlay hidden" id="confirmOverlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon" id="confirmIcon">⚠️</div>
+            <h3 id="confirmTitle">确认删除</h3>
+            <p id="confirmMessage">确定要删除这篇文章吗？此操作不可撤销。</p>
+            <div class="confirm-actions">
+                <button class="btn-secondary" id="btnConfirmCancel">取消</button>
+                <button class="btn-danger" id="btnConfirmOk">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/github-storage.js"></script>
+    <script src="js/posts.js"></script>
+</body>
+</html>
