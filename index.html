@@ -117,7 +117,6 @@
                     </div>
                     <div class="hero-actions">
                         <button class="btn-primary" onclick="scrollToPosts()">开始阅读 ↗</button>
-                        <button class="btn-secondary" onclick="window.open('https://github.com/CN1Smile', '_blank')">查看项目作品</button>
                     </div>
                     <div class="hero-stats">
                         <span><strong>128</strong> 篇文章</span>
@@ -144,11 +143,11 @@
             <!-- 最新笔记卡片 -->
             <div class="sidebar-card note-card">
                 <h3 class="card-label">LATEST NOTE</h3>
-                <h4 class="card-title">Unity URP 渲染管线优化实践</h4>
-                <p class="card-desc">
+                <h4 class="card-title" id="latestNoteTitle" style="cursor: pointer;">Unity URP 渲染管线优化实践</h4>
+                <p class="card-desc" id="latestNoteDesc">
                     如何在移动端实现高效的后处理效果，以及 SRP Batcher 的最佳实践经验。
                 </p>
-                <div class="card-tags">
+                <div class="card-tags" id="latestNoteTags">
                     <span class="mini-tag purple">Unity</span>
                     <span class="mini-tag blue">Graphics</span>
                     <span class="mini-tag gray">Performance</span>
@@ -157,9 +156,8 @@
                     <div class="author-avatar">张</div>
                     <div class="author-info">
                         <span class="author-name">张志通</span>
-                        <span class="author-meta">更新于 5 天前 · 7 min read</span>
+                        <span class="author-meta" id="latestNoteMeta">更新于 5 天前 · 7 min read</span>
                     </div>
-                    <button class="read-btn" id="latestNoteBtn">阅读 →</button>
                 </div>
                 <p class="card-footnote">深入游戏引擎的渲染世界</p>
             </div>

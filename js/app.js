@@ -371,18 +371,40 @@ function closeSubscribeModal() {
 }
 
 /**
- * 初始化最新笔记阅读按钮
+ * 初始化最新笔记卡片
  */
-function initLatestNoteBtn() {
-    const btn = document.getElementById('latestNoteBtn');
-    if (btn && allPosts.length > 0) {
-        // 跳转到最新文章
-        btn.addEventListener('click', () => {
-            const latestPost = allPosts[0];
-            if (latestPost) {
-                window.location.href = `post.html?slug=${latestPost.slug}`;
-            }
+function initLatestNote() {
+    if (allPosts.length === 0) return;
+    
+    const latestPost = allPosts[0];
+    const titleEl = document.getElementById('latestNoteTitle');
+    const descEl = document.getElementById('latestNoteDesc');
+    const metaEl = document.getElementById('latestNoteMeta');
+    
+    // 更新内容
+    if (titleEl) {
+        titleEl.textContent = latestPost.title;
+        titleEl.style.cursor = 'pointer';
+        titleEl.addEventListener('click', () => {
+            window.location.href = `post.html?slug=${latestPost.slug}`;
         });
+        // 添加悬停效果
+        titleEl.addEventListener('mouseenter', () => {
+            titleEl.style.color = 'var(--accent-purple)';
+        });
+        titleEl.addEventListener('mouseleave', () => {
+            titleEl.style.color = '';
+        });
+    }
+    
+    if (descEl) {
+        descEl.textContent = latestPost.summary;
+    }
+    
+    if (metaEl) {
+        const readingTime = getReadingTime(latestPost.summary);
+        const dateStr = formatDate(latestPost.date);
+        metaEl.textContent = `${dateStr} · ${readingTime}`;
     }
 }
 
@@ -390,7 +412,7 @@ function initLatestNoteBtn() {
 document.addEventListener('DOMContentLoaded', () => {
     loadSiteConfig(); // 先加载站点配置
     loadPosts().then(() => {
-        initLatestNoteBtn(); // 文章加载完成后初始化按钮
+        initLatestNote(); // 文章加载完成后初始化最新笔记卡片
     });
     initFilterTags();
     
