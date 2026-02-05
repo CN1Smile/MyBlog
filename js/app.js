@@ -10,6 +10,8 @@ const loadingElement = document.getElementById('loading');
 let allPosts = [];
 // 当前选中的分类
 let currentCategory = '全部';
+// 管理员验证状态（用于显示私密文章）
+const isAdmin = sessionStorage.getItem('blog_editor_auth') === 'true';
 
 // 分类图标映射
 const categoryIcons = {
@@ -65,14 +67,17 @@ function formatDate(dateString) {
 function createPostItem(post) {
     const category = getPostCategory(post.slug, post.title);
     const readingTime = getReadingTime(post.summary);
+    const isPrivate = post.visibility === 'private';
+    const privateTag = isPrivate ? '<span class="private-tag" title="仅自己可见">🔒</span>' : '';
     
     return `
-        <article class="post-item">
+        <article class="post-item${isPrivate ? ' post-private' : ''}">
             <div class="post-item-content">
                 <div class="post-item-meta">
                     <span class="post-item-date">发布日期：${formatDate(post.date)}</span>
                     <span>·</span>
                     <span>${readingTime}</span>
+                    ${privateTag}
                 </div>
                 <h3 class="post-item-title">${post.title}</h3>
                 <p class="post-item-desc">${post.summary}</p>
@@ -268,6 +273,19 @@ function filterPostsByCategory(categoryName) {
 }
 
 /**
+ * 根据可见性过滤文章
+ * 私密文章只有管理员可见
+ */
+function filterPostsByVisibility(posts) {
+    if (isAdmin) {
+        // 管理员可以看到所有文章
+        return posts;
+    }
+    // 普通用户只能看到公开文章
+    return posts.filter(post => post.visibility !== 'private');
+}
+
+/**
  * 加载文章数据
  */
 async function loadPosts() {
@@ -284,8 +302,9 @@ async function loadPosts() {
         
         const data = await response.json();
         
-        // 保存所有文章用于后续筛选
-        allPosts = data.posts || [];
+        // 保存所有文章用于后续筛选（先按可见性过滤）
+        const rawPosts = data.posts || [];
+        allPosts = filterPostsByVisibility(rawPosts);
         
         hideLoading();
         

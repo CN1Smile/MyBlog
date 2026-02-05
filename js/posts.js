@@ -203,6 +203,7 @@
         const isFirst = index === 0;
         const isLast = index === posts.length - 1;
         const isSelected = selectedSlugs.has(post.slug);
+        const isPrivate = post.visibility === 'private';
         
         const categoryIcons = {
             frontend: '🎨',
@@ -212,15 +213,16 @@
             essay: '✍️'
         };
         const icon = post.icon || categoryIcons[post.category] || '📄';
+        const privateTag = isPrivate ? '<span class="visibility-badge private" title="仅自己可见">🔒 私密</span>' : '<span class="visibility-badge public" title="所有人可见">🌐</span>';
         
         return `
-            <div class="post-item ${isSelected ? 'selected' : ''}" data-slug="${post.slug}">
+            <div class="post-item ${isSelected ? 'selected' : ''}${isPrivate ? ' post-private' : ''}" data-slug="${post.slug}">
                 <div class="post-checkbox">
                     <input type="checkbox" class="checkbox post-select" 
                            data-slug="${post.slug}" ${isSelected ? 'checked' : ''}>
                 </div>
                 <div class="post-info">
-                    <div class="post-title">${icon} ${post.title}</div>
+                    <div class="post-title">${icon} ${post.title} ${privateTag}</div>
                     <div class="post-meta">
                         <span>📅 ${post.date || '未知日期'}</span>
                         <span>📁 ${post.category || '未分类'}</span>
