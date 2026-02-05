@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>站点设置 - ZHITONG'S BLOG</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <style>
+        .settings-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .settings-header {
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .settings-header p {
+            color: var(--text-secondary);
+        }
+        
+        .settings-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .settings-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .field-group {
+            margin-bottom: 1rem;
+        }
+        
+        .field-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+        
+        .field-group input,
+        .field-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        
+        .field-group input:focus,
+        .field-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+        
+        .field-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .field-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .field-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 44px;
+        }
+        
+        .tag-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-purple);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .tag-item button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        
+        .tags-input-container input {
+            flex: 1;
+            min-width: 120px;
+            border: none;
+            background: transparent;
+            padding: 0.25rem;
+        }
+        
+        .tags-input-container input:focus {
+            outline: none;
+        }
+        
+        /* 系列编辑器 */
+        .series-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .series-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .series-item input {
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .series-item button {
+            padding: 0.5rem;
+            background: var(--danger-bg, rgba(255, 100, 100, 0.1));
+            border: 1px solid var(--danger-color, #ff6b6b);
+            border-radius: 6px;
+            color: var(--danger-color, #ff6b6b);
+            cursor: pointer;
+        }
+        
+        .add-series-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .add-series-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+        
+        /* 保存栏 */
+        .settings-actions {
+            position: sticky;
+            bottom: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+        
+        .settings-actions .btn-primary {
+            padding: 0.75rem 2rem;
+        }
+        
+        .settings-actions .btn-secondary {
+            padding: 0.75rem 1.5rem;
+        }
+        
+        /* 预览卡片 */
+        .preview-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .preview-card h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-card .preview-content {
+            font-size: 0.95rem;
+        }
+        
+        /* Loading */
+        .settings-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- 密码验证遮罩层 -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-dialog">
+            <div class="auth-icon">🔐</div>
+            <h2>访问验证</h2>
+            <p>请输入密码以访问设置页面</p>
+            <form id="authForm">
+                <input type="password" id="authPassword" placeholder="输入密码..." autocomplete="off" autofocus>
+                <p class="auth-error" id="authError"></p>
+                <button type="submit" class="btn-primary">验证</button>
+            </form>
+            <a href="index.html" class="auth-back">← 返回首页</a>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">⚙️</span>
+                <span class="logo-text">站点设置</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="posts.html" class="nav-link">文章</a>
+            <a href="editor.html" class="nav-link">撰写</a>
+        </div>
+    </header>
+
+    <!-- 设置主容器 -->
+    <main class="settings-container" id="settingsContainer">
+        <div class="settings-loading" id="loadingState">
+            <p>加载配置中...</p>
+        </div>
+        
+        <div id="settingsContent" style="display: none;">
+            <div class="settings-header">
+                <h1>⚙️ 站点设置</h1>
+                <p>自定义你的博客首页内容，修改后点击保存即可生效</p>
+            </div>
+
+            <!-- 基本信息 -->
+            <section class="settings-section">
+                <h2>🏠 基本信息</h2>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="siteTitle">网站标题</label>
+                        <input type="text" id="siteTitle" placeholder="张志通 - 游戏开发工程师">
+                    </div>
+                    <div class="field-group">
+                        <label for="logoIcon">Logo 图标</label>
+                        <input type="text" id="logoIcon" placeholder="🎮">
+                        <p class="field-hint">可以使用 Emoji 或文字</p>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="logoText">Logo 文字</label>
+                        <input type="text" id="logoText" placeholder="ZHITONG'S BLOG">
+                    </div>
+                    <div class="field-group">
+                        <label for="siteLabel">顶部标签</label>
+                        <input type="text" id="siteLabel" placeholder="GAME DEV BLOG · 2026">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hero 区域 -->
+            <section class="settings-section">
+                <h2>✨ Hero 区域</h2>
+                <div class="field-group">
+                    <label for="heroTitle">主标题</label>
+                    <input type="text" id="heroTitle" placeholder="记录游戏开发的每一次探索">
+                    <p class="field-hint">使用 &lt;span class="gradient-text"&gt;文字&lt;/span&gt; 添加渐变效果</p>
+                </div>
+                <div class="field-group">
+                    <label for="heroDescription">描述文字</label>
+                    <textarea id="heroDescription" rows="3" placeholder="这里是张志通的游戏开发笔记..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label>写作主题标签</label>
+                    <div class="tags-input-container" id="topicsContainer">
+                        <input type="text" id="topicsInput" placeholder="输入后按 Enter 添加...">
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="updateFrequency">更新频率</label>
+                        <input type="text" id="updateFrequency" placeholder="持续更新中">
+                    </div>
+                    <div class="field-group">
+                        <label for="primaryButton">主按钮文字</label>
+                        <input type="text" id="primaryButton" placeholder="开始阅读 ↗">
+                    </div>
+                    <div class="field-group">
+                        <label for="secondaryButton">次按钮文字</label>
+                        <input type="text" id="secondaryButton" placeholder="查看项目作品">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 作者信息 -->
+            <section class="settings-section">
+                <h2>👤 作者信息</h2>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="authorName">作者名称</label>
+                        <input type="text" id="authorName" placeholder="张志通">
+                    </div>
+                    <div class="field-group">
+                        <label for="authorAvatar">头像文字</label>
+                        <input type="text" id="authorAvatar" placeholder="张">
+                        <p class="field-hint">显示在头像中的文字（通常是姓氏）</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 文章分类 -->
+            <section class="settings-section">
+                <h2>📂 文章分类</h2>
+                <div class="field-group">
+                    <label>分类标签</label>
+                    <div class="tags-input-container" id="categoriesContainer">
+                        <input type="text" id="categoriesInput" placeholder="输入后按 Enter 添加...">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 系列专题 -->
+            <section class="settings-section">
+                <h2>📚 进行中的系列</h2>
+                <div class="series-list" id="seriesList">
+                    <!-- 动态生成 -->
+                </div>
+                <button type="button" class="add-series-btn" id="addSeriesBtn">+ 添加系列</button>
+            </section>
+
+            <!-- 关于博客 -->
+            <section class="settings-section">
+                <h2>📝 关于博客</h2>
+                <div class="field-group">
+                    <label for="aboutText">简介文字</label>
+                    <textarea id="aboutText" rows="3" placeholder="这里记录我在游戏开发路上的学习笔记..."></textarea>
+                </div>
+            </section>
+
+            <!-- 最新笔记卡片 -->
+            <section class="settings-section">
+                <h2>📌 侧边栏笔记卡片</h2>
+                <div class="field-group">
+                    <label for="noteTitle">笔记标题</label>
+                    <input type="text" id="noteTitle" placeholder="Unity URP 渲染管线优化实践">
+                </div>
+                <div class="field-group">
+                    <label for="noteDescription">笔记描述</label>
+                    <textarea id="noteDescription" rows="2" placeholder="如何在移动端实现高效的后处理效果..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="noteFootnote">底部文字</label>
+                    <input type="text" id="noteFootnote" placeholder="深入游戏引擎的渲染世界">
+                </div>
+            </section>
+
+            <!-- 保存操作 -->
+            <div class="settings-actions">
+                <button type="button" class="btn-secondary" id="btnReset">🔄 重置为默认</button>
+                <button type="button" class="btn-secondary" id="btnGithubSettings">⚙️ GitHub 配置</button>
+                <button type="button" class="btn-primary" id="btnSave">💾 保存配置</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- GitHub 配置弹窗 -->
+    <div class="github-overlay hidden" id="githubOverlay">
+        <div class="github-dialog">
+            <div class="github-header">
+                <h3>⚙️ GitHub 配置</h3>
+                <button type="button" class="github-close" id="btnCloseGithub">×</button>
+            </div>
+            <form id="githubForm">
+                <div class="github-field">
+                    <label for="githubToken">Personal Access Token</label>
+                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+                    <small>在 <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub Settings</a> 创建 Token</small>
+                </div>
+                <div class="github-row">
+                    <div class="github-field">
+                        <label for="githubOwner">仓库所有者</label>
+                        <input type="text" id="githubOwner" placeholder="username" autocomplete="off">
+                    </div>
+                    <div class="github-field">
+                        <label for="githubRepo">仓库名称</label>
+                        <input type="text" id="githubRepo" placeholder="my-blog" autocomplete="off">
+                    </div>
+                </div>
+                <div class="github-field">
+                    <label for="githubBranch">分支</label>
+                    <input type="text" id="githubBranch" placeholder="main" autocomplete="off">
+                </div>
+                <div class="github-actions">
+                    <button type="submit" class="btn-primary">💾 保存配置</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/github-storage.js"></script>
+    <script src="js/site-config.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>

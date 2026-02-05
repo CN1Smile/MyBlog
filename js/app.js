@@ -1,5 +1,5 @@
 /**
- * HENGHENG STUDIO - 博客首页
+ * ZHITONG'S BLOG - 博客首页
  */
 
 // DOM 引用
@@ -11,9 +11,11 @@ const categoryIcons = {
     'openspec': { icon: '🔧', name: 'OpenSpec' },
     'css': { icon: '🎨', name: 'CSS' },
     'javascript': { icon: '⚡', name: 'JavaScript' },
-    'workflow': { icon: '�', name: 'Workflow' },
+    'workflow': { icon: '🔄', name: 'Workflow' },
     'design': { icon: '✨', name: '设计' },
     'ai': { icon: '🤖', name: 'AI' },
+    'unity': { icon: '🎮', name: 'Unity' },
+    'graphics': { icon: '🖼️', name: '图形学' },
     'default': { icon: '📄', name: '文章' }
 };
 
@@ -27,6 +29,8 @@ function getPostCategory(slug, title) {
     if (slug.includes('workflow') || title.includes('工作流')) return categoryIcons.workflow;
     if (slug.includes('design') || title.includes('设计')) return categoryIcons.design;
     if (slug.includes('ai') || title.includes('AI')) return categoryIcons.ai;
+    if (slug.includes('unity') || title.includes('Unity')) return categoryIcons.unity;
+    if (slug.includes('shader') || title.includes('渲染') || title.includes('图形')) return categoryIcons.graphics;
     return categoryIcons.default;
 }
 
@@ -118,6 +122,111 @@ function showError(message) {
 }
 
 /**
+ * 加载站点配置并更新页面
+ */
+async function loadSiteConfig() {
+    try {
+        const response = await fetch('data/site-config.json');
+        if (!response.ok) {
+            console.log('使用默认配置');
+            return;
+        }
+        
+        const config = await response.json();
+        applySiteConfig(config);
+    } catch (error) {
+        console.log('配置加载失败，使用默认配置:', error);
+    }
+}
+
+/**
+ * 应用站点配置到页面
+ */
+function applySiteConfig(config) {
+    // 更新网站标题
+    if (config.site?.title) {
+        document.title = config.site.title;
+    }
+    
+    // 更新 Logo
+    const logoIcon = document.querySelector('.logo .logo-icon');
+    const logoText = document.querySelector('.logo .logo-text');
+    if (logoIcon && config.site?.logoIcon) logoIcon.textContent = config.site.logoIcon;
+    if (logoText && config.site?.logoText) logoText.textContent = config.site.logoText;
+    
+    // 更新 Hero 区域
+    const heroLabel = document.querySelector('.hero-label');
+    const heroTitle = document.querySelector('.hero-title');
+    const heroDesc = document.querySelector('.hero-description');
+    
+    if (heroLabel && config.site?.label) {
+        heroLabel.textContent = `— ${config.site.label}`;
+    }
+    if (heroTitle && config.hero?.title) {
+        heroTitle.innerHTML = config.hero.title;
+    }
+    if (heroDesc && config.hero?.description) {
+        heroDesc.textContent = config.hero.description;
+    }
+    
+    // 更新写作主题标签
+    const heroTags = document.querySelector('.hero-tags');
+    if (heroTags && config.hero?.topics) {
+        const topicsHtml = config.hero.topics.map(t => `<span class="tag-item">${t}</span>`).join('');
+        heroTags.innerHTML = `
+            <span class="tag">✎ 写作主题：</span>
+            ${topicsHtml}
+            <span class="tag-divider">|</span>
+            <span class="tag">${config.hero?.updateFrequency || '持续更新中'}</span>
+        `;
+    }
+    
+    // 更新按钮文字
+    const primaryBtn = document.querySelector('.hero-actions .btn-primary');
+    const secondaryBtn = document.querySelector('.hero-actions .btn-secondary');
+    if (primaryBtn && config.hero?.primaryButton) primaryBtn.textContent = config.hero.primaryButton;
+    if (secondaryBtn && config.hero?.secondaryButton) secondaryBtn.textContent = config.hero.secondaryButton;
+    
+    // 更新作者信息
+    const authorAvatar = document.querySelector('.author-avatar');
+    const authorName = document.querySelector('.author-name');
+    if (authorAvatar && config.author?.avatarText) authorAvatar.textContent = config.author.avatarText;
+    if (authorName && config.author?.name) authorName.textContent = config.author.name;
+    
+    // 更新侧边栏笔记卡片
+    const noteTitle = document.querySelector('.note-card .card-title');
+    const noteDesc = document.querySelector('.note-card .card-desc');
+    const noteFootnote = document.querySelector('.note-card .card-footnote');
+    if (noteTitle && config.latestNote?.title) noteTitle.textContent = config.latestNote.title;
+    if (noteDesc && config.latestNote?.description) noteDesc.textContent = config.latestNote.description;
+    if (noteFootnote && config.latestNote?.footnote) noteFootnote.textContent = config.latestNote.footnote;
+    
+    // 更新分类标签
+    const filterTagsContainer = document.querySelector('.filter-tags');
+    if (filterTagsContainer && config.categories) {
+        filterTagsContainer.innerHTML = config.categories.map((cat, i) => 
+            `<span class="filter-tag${i === 0 ? ' active' : ''}">${cat}</span>`
+        ).join('');
+        initFilterTags(); // 重新绑定事件
+    }
+    
+    // 更新系列列表
+    const seriesList = document.querySelector('.series-list');
+    if (seriesList && config.series) {
+        seriesList.innerHTML = config.series.map(s => `
+            <li>
+                <span class="series-name">${s.name}</span>
+                <span class="series-progress">${s.progress}</span>
+            </li>
+        `).join('');
+    }
+    
+    // 更新关于博客
+    const aboutText = document.querySelector('.about-text');
+    if (aboutText && config.about) aboutText.textContent = config.about;
+}
+
+/**
  * 加载文章数据
  */
 async function loadPosts() {
@@ -159,6 +268,7 @@ function initFilterTags() {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
+    loadSiteConfig(); // 先加载站点配置
     loadPosts();
     initFilterTags();
 });
