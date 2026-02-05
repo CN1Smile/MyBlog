@@ -29,6 +29,7 @@
         column: document.getElementById('column'),
         columnList: document.getElementById('columnList'),
         tags: document.getElementById('tags'),
+        visibility: document.getElementById('visibility'),
         markdownInput: document.getElementById('markdownInput'),
         
         // 预览区域
@@ -292,13 +293,14 @@
             elements.excerpt.value = post.summary || '';
             elements.category.value = post.category || 'frontend';
             elements.tags.value = (post.tags || []).join(', ');
+            elements.visibility.value = post.visibility || 'public';
             elements.markdownInput.value = post.content || '';
 
             // 设置编辑状态
             editingSlug = slug;
             
             // 更新页面标题
-            document.title = `编辑: ${post.title} - HENGHENG STUDIO`;
+            document.title = `编辑: ${post.title} - ZHITONG'S BLOG`;
             
             // 更新预览
             updatePreview();
@@ -349,7 +351,7 @@
         
         // 所有表单字段变更
         const formFields = [elements.title, elements.slug, elements.excerpt, 
-                           elements.category, elements.tags, elements.markdownInput];
+                           elements.category, elements.tags, elements.visibility, elements.markdownInput];
         formFields.forEach(field => {
             field.addEventListener('input', markAsUnsaved);
         });
@@ -575,6 +577,7 @@
             excerpt: elements.excerpt.value,
             category: elements.category.value,
             tags: elements.tags.value,
+            visibility: elements.visibility.value,
             content: elements.markdownInput.value,
             lastSaved: new Date().toISOString()
         };
@@ -627,6 +630,7 @@
         elements.excerpt.value = data.excerpt || '';
         elements.category.value = data.category || 'frontend';
         elements.tags.value = data.tags || '';
+        elements.visibility.value = data.visibility || 'public';
         elements.markdownInput.value = data.content || '';
         
         // 标记 slug 为已手动编辑
@@ -649,6 +653,7 @@
         elements.excerpt.value = '';
         elements.category.value = 'frontend';
         elements.tags.value = '';
+        elements.visibility.value = 'public';
         elements.markdownInput.value = '';
         
         // 清空 localStorage
@@ -721,6 +726,7 @@
             content: content,           // 文章详情页用
             category: elements.category.value,
             tags: tags,
+            visibility: elements.visibility.value,  // 可见性: public / private
             readTime: `${readTime} min read`,
             icon: getCategoryIcon(elements.category.value)
         };

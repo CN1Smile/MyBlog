@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>撰写文章 - HENGHENG STUDIO</title>
+    <title>撰写文章 - ZHANGZHITONG'S BLOG</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/editor.css">
     <!-- Marked.js for Markdown parsing -->
@@ -33,7 +33,7 @@
         <div class="nav-left">
             <a href="index.html" class="logo">
                 <span class="logo-icon">📝</span>
-                <span class="logo-text">HENGHENG STUDIO</span>
+                <span class="logo-text">ZHITONG'S BLOG</span>
             </a>
         </div>
         <div class="nav-right">
@@ -87,6 +87,13 @@
                 <div class="meta-field">
                     <label for="tags">标签 (逗号分隔)</label>
                     <input type="text" id="tags" placeholder="JavaScript, Vue, 教程" autocomplete="off">
+                </div>
+                <div class="meta-field">
+                    <label for="visibility">可见性</label>
+                    <select id="visibility">
+                        <option value="public">🌐 所有人可见</option>
+                        <option value="private">🔒 仅自己可见</option>
+                    </select>
                 </div>
                 <div class="meta-actions">
                     <button class="btn-secondary" id="btnGithubSettings">⚙️ GitHub</button>

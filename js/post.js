@@ -107,7 +107,7 @@ function showError() {
     elements.loading.classList.add('hidden');
     elements.error.classList.remove('hidden');
     elements.article.classList.add('hidden');
-    document.title = '文章未找到 - HENGHENG STUDIO';
+    document.title = '文章未找到 - ZHITONG\'S BLOG';
 }
 
 /**
@@ -145,7 +145,7 @@ function renderNavigation(posts, currentIndex) {
  */
 function renderPost(post, posts, currentIndex) {
     // 设置页面标题
-    document.title = `${post.title} - HENGHENG STUDIO`;
+    document.title = `${post.title} - ZHITONG'S BLOG`;
     
     // 填充文章信息
     elements.title.textContent = post.title;
