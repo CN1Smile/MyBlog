@@ -550,12 +550,15 @@
         const wordCount = content.length;
         const readTime = Math.max(1, Math.ceil(wordCount / 400));
         
+        // 使用 summary 字段（首页列表使用）
+        const summary = elements.excerpt.value || content.substring(0, 150) + '...';
+        
         return {
             slug: elements.slug.value || generateSlug(elements.title.value),
             title: elements.title.value,
             date: dateStr,
-            excerpt: elements.excerpt.value,
-            content: content,
+            summary: summary,           // 首页列表显示用
+            content: content,           // 文章详情页用
             category: elements.category.value,
             tags: tags,
             readTime: `${readTime} min read`,
