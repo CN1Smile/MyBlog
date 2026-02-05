@@ -3,7 +3,7 @@
  */
 
 // 编辑器密码
-const EDITOR_PASSWORD = '123456';
+const EDITOR_PASSWORD = 'tong951008';
 
 // 当前配置
 let currentConfig = null;
